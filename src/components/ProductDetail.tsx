@@ -10,6 +10,7 @@ import { useCart } from '@/lib/cart-context';
 interface ProductDetailProps {
   product: {
     _id: string;
+    sku?: string;
     name: string;
     slug: string;
     description?: string;
@@ -85,6 +86,11 @@ export function ProductDetail({ product }: ProductDetailProps) {
           className="space-y-6"
         >
           <h1 className="text-2xl md:text-3xl font-bold">{product.name}</h1>
+          {product.sku && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-mono">
+              Mã SP: {product.sku}
+            </p>
+          )}
           <div className="flex items-center gap-3">
             <span className="text-primary-600 dark:text-primary-400 text-2xl font-semibold">
               {formatPrice(product.price)}

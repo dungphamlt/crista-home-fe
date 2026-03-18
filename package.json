@@ -1,5 +1,5 @@
 {
-  "name": "crista-home-fe",
+  "name": "@crista-home/web",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -10,6 +10,7 @@
     "clean": "rm -rf .next"
   },
   "dependencies": {
+    "@crista-home/types": "*",
     "@tailwindcss/postcss": "^4.2.1",
     "autoprefixer": "^10.4.27",
     "axios": "^1.13.6",
