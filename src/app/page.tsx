@@ -13,32 +13,63 @@ import Link from "next/link";
 import Image from "next/image";
 
 async function getHomeData(): Promise<{
-  categories: {
+  categoriesCrista: {
     _id: string;
     name: string;
     slug: string;
     image?: string;
     productCount?: number;
+    order?: number;
+  }[];
+  categoriesTewa: {
+    _id: string;
+    name: string;
+    slug: string;
+    image?: string;
+    productCount?: number;
+    order?: number;
   }[];
   featured: Product[];
   newProducts: Product[];
   banners: { image: string; title: string; link?: string }[];
 }> {
   try {
-    const [categoriesRes, featuredRes, newRes, bannersRes] = await Promise.all([
-      api.get(endpoints.categories(true)),
-      api.get(endpoints.featuredProducts(12)),
-      api.get(endpoints.newProducts(12)),
-      api.get(endpoints.banners()),
-    ]);
+    const [categoriesCrista, categoriesTewa, featuredRes, newRes, bannersRes] =
+      await Promise.all([
+        api.get(
+          endpoints.categories({
+            parentId: "69b8c44f226b5abf0189548d",
+            withCount: true,
+          }),
+        ),
+        api.get(
+          endpoints.categories({
+            parentId: "69b8c44f226b5abf01895482",
+            withCount: true,
+          }),
+        ),
+        api.get(endpoints.featuredProducts(12)),
+        api.get(endpoints.newProducts(12)),
+        api.get(endpoints.banners()),
+      ]);
     return {
-      categories:
-        (categoriesRes.data as {
+      categoriesCrista:
+        (categoriesCrista.data as {
           _id: string;
           name: string;
           slug: string;
           image?: string;
           productCount?: number;
+          order?: number;
+        }[]) || [],
+      categoriesTewa:
+        (categoriesTewa.data as {
+          _id: string;
+          name: string;
+          slug: string;
+          image?: string;
+          productCount?: number;
+          order?: number;
         }[]) || [],
       featured: (featuredRes.data as Product[]) || [],
       newProducts: (newRes.data as Product[]) || [],
@@ -52,12 +83,21 @@ async function getHomeData(): Promise<{
   } catch (error) {
     console.log("error", error);
     return {
-      categories: [] as {
+      categoriesCrista: [] as {
         _id: string;
         name: string;
         slug: string;
         image?: string;
         productCount?: number;
+        order?: number;
+      }[],
+      categoriesTewa: [] as {
+        _id: string;
+        name: string;
+        slug: string;
+        image?: string;
+        productCount?: number;
+        order?: number;
       }[],
       featured: [] as Product[],
       newProducts: [] as Product[],
@@ -67,12 +107,13 @@ async function getHomeData(): Promise<{
 }
 
 export default async function HomePage() {
-  const { categories, featured, newProducts, banners } = await getHomeData();
-  console.log("categories", categories);
+  const { categoriesCrista, categoriesTewa, featured, newProducts, banners } =
+    await getHomeData();
+  console.log("categoriesCrista", categoriesCrista);
+  console.log("categoriesTewa", categoriesTewa);
   console.log("featured", featured);
   console.log("newProducts", newProducts);
   console.log("banners", banners);
-
   const bannerList =
     Array.isArray(banners) && banners.length > 0
       ? banners
@@ -152,7 +193,7 @@ export default async function HomePage() {
       </section>
 
       {/* CRISTA Categories */}
-      {categories.length > 0 && (
+      {categoriesCrista.length > 0 && (
         <section className="py-16 bg-white dark:bg-gray-900">
           <div className="container">
             <ScrollReveal>
@@ -160,8 +201,8 @@ export default async function HomePage() {
                 CRISTA – THỦY TINH • PHA LÊ • GỐM • SỨ CAO CẤP
               </h2>
             </ScrollReveal>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-              {categories.slice(0, 6).map(
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+              {categoriesCrista.slice(0, 6).map(
                 (
                   cat: {
                     _id: string;
@@ -169,6 +210,7 @@ export default async function HomePage() {
                     slug: string;
                     image?: string;
                     productCount?: number;
+                    order?: number;
                   },
                   i: number,
                 ) => (
@@ -177,7 +219,7 @@ export default async function HomePage() {
                       href={`/danh-muc/${cat.slug}`}
                       className="block text-center group"
                     >
-                      <div className="aspect-square relative rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 mb-3">
+                      <div className="aspect-square shadow-sm relative rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 mb-3">
                         <Image
                           src={cat.image || PLACEHOLDER_IMAGES.category}
                           alt={cat.name}
@@ -191,7 +233,8 @@ export default async function HomePage() {
                         {cat.name}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        {cat.productCount ?? 0} Sản phẩm
+                        {cat.order ? `#${cat.order}` : (cat.productCount ?? 0)}{" "}
+                        Sản phẩm
                       </p>
                     </Link>
                   </ScrollReveal>
@@ -225,6 +268,47 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* TEWA Categories */}
+      {categoriesTewa.length > 0 && (
+        <section className="py-16 bg-white dark:bg-gray-900">
+          <div className="container">
+            <ScrollReveal>
+              <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 uppercase tracking-tight text-gray-900 dark:text-white">
+                TEWA – ĐỒ GIA DỤNG
+              </h2>
+            </ScrollReveal>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+              {categoriesTewa.slice(0, 6).map((cat, i) => (
+                <ScrollReveal key={cat._id} delay={i * 0.05}>
+                  <Link
+                    href={`/danh-muc/${cat.slug}`}
+                    className="block text-center group"
+                  >
+                    <div className="aspect-square shadow-sm relative rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 mb-3">
+                      <Image
+                        src={cat.image || PLACEHOLDER_IMAGES.category}
+                        alt={cat.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition"
+                        sizes="(max-width: 768px) 50vw, 16vw"
+                        loading="lazy"
+                      />
+                    </div>
+                    <h3 className="font-bold text-gray-900 dark:text-white group-hover:text-rose-500">
+                      {cat.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      {cat.order ? `#${cat.order}` : (cat.productCount ?? 0)}{" "}
+                      Sản phẩm
+                    </p>
+                  </Link>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Sản phẩm mới */}
       <section className="py-16 bg-white dark:bg-gray-900">

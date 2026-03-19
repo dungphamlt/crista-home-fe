@@ -8,8 +8,13 @@ export const api = axios.create({
 });
 
 export const endpoints = {
-  categories: (withCount?: boolean) =>
-    `/categories${withCount ? "?withCount=true" : ""}`,
+  categories: (options?: { parentId?: string; withCount?: boolean }) => {
+    const params = new URLSearchParams();
+    if (options?.parentId) params.set("parent", options.parentId);
+    if (options?.withCount) params.set("withCount", "true");
+    const qs = params.toString();
+    return `/categories${qs ? `?${qs}` : ""}`;
+  },
   categoryBySlug: (slug: string) => `/categories/slug/${slug}`,
   products: (params?: Record<string, string | number>) => {
     if (!params || Object.keys(params).length === 0) return "/products";
