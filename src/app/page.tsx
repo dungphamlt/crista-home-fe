@@ -11,6 +11,11 @@ import {
 } from "@/components/ServiceIcons";
 import Link from "next/link";
 import Image from "next/image";
+import { HeroBannerSlider } from "@/components/HeroBannerSlider";
+import {
+  CATEGORY_PARENT_CRISTA,
+  CATEGORY_PARENT_TEWA,
+} from "@/lib/category-brands";
 
 async function getHomeData(): Promise<{
   categoriesCrista: {
@@ -38,13 +43,13 @@ async function getHomeData(): Promise<{
       await Promise.all([
         api.get(
           endpoints.categories({
-            parentId: "69b8c44f226b5abf0189548d",
+            parentId: CATEGORY_PARENT_CRISTA,
             withCount: true,
           }),
         ),
         api.get(
           endpoints.categories({
-            parentId: "69b8c44f226b5abf01895482",
+            parentId: CATEGORY_PARENT_TEWA,
             withCount: true,
           }),
         ),
@@ -73,15 +78,9 @@ async function getHomeData(): Promise<{
         }[]) || [],
       featured: (featuredRes.data as Product[]) || [],
       newProducts: (newRes.data as Product[]) || [],
-      banners:
-        (bannersRes.data as {
-          image: string;
-          title: string;
-          link?: string;
-        }[]) || [],
+      banners: normalizeBanners(bannersRes.data),
     };
-  } catch (error) {
-    console.log("error", error);
+  } catch {
     return {
       categoriesCrista: [] as {
         _id: string;
@@ -106,49 +105,56 @@ async function getHomeData(): Promise<{
   }
 }
 
+function normalizeBanners(raw: unknown): {
+  image: string;
+  title: string;
+  link?: string;
+}[] {
+  if (!raw) return [];
+  const arr = Array.isArray(raw)
+    ? raw
+    : (raw as { data?: unknown }).data;
+  if (!Array.isArray(arr)) return [];
+  return arr
+    .map((item: unknown) => {
+      const b = item as Record<string, unknown>;
+      const image =
+        (typeof b.image === "string" && b.image) ||
+        (typeof b.imageUrl === "string" && b.imageUrl) ||
+        (typeof b.url === "string" && b.url) ||
+        "";
+      const title =
+        (typeof b.title === "string" && b.title) ||
+        (typeof b.name === "string" && b.name) ||
+        "Banner";
+      const link =
+        typeof b.link === "string"
+          ? b.link
+          : typeof b.href === "string"
+            ? b.href
+            : undefined;
+      return image ? { image, title, link } : null;
+    })
+    .filter(Boolean) as { image: string; title: string; link?: string }[];
+}
+
 export default async function HomePage() {
   const { categoriesCrista, categoriesTewa, featured, newProducts, banners } =
     await getHomeData();
-  console.log("categoriesCrista", categoriesCrista);
-  console.log("categoriesTewa", categoriesTewa);
-  console.log("featured", featured);
-  console.log("newProducts", newProducts);
-  console.log("banners", banners);
   const bannerList =
-    Array.isArray(banners) && banners.length > 0
+    banners.length > 0
       ? banners
-      : [{ image: PLACEHOLDER_IMAGES.banner, title: "Crista Home", link: "/" }];
+      : [
+          {
+            image: PLACEHOLDER_IMAGES.banner,
+            title: "Đồ gia dụng gia đình hiện đại",
+            link: "/san-pham",
+          },
+        ];
 
   return (
     <div>
-      {/* Hero Banner */}
-      <section className="relative h-[400px] md:h-[500px] overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src={bannerList[0].image}
-            alt={bannerList[0].title}
-            fill
-            priority
-            className="object-cover"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-black/30" />
-        </div>
-        <div className="container relative h-full flex flex-col justify-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white drop-shadow-lg">
-            Đồ gia dụng gia đình hiện đại
-          </h1>
-          <p className="mt-4 text-xl text-white/90 max-w-xl">
-            Tinh giản và bền bỉ — Thủy tinh, pha lê, gốm sứ cao cấp
-          </p>
-          <Link
-            href="/san-pham"
-            className="mt-6 inline-block px-8 py-3 bg-white text-primary-600 font-semibold rounded-lg hover:bg-gray-100 transition w-fit"
-          >
-            Xem sản phẩm
-          </Link>
-        </div>
-      </section>
+      <HeroBannerSlider banners={bannerList} />
 
       {/* Service Bar */}
       <section className="py-8 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
@@ -311,7 +317,7 @@ export default async function HomePage() {
       )}
 
       {/* Sản phẩm mới */}
-      <section className="py-16 bg-white dark:bg-gray-900">
+      <section className="pt-16 pb-10 md:pb-28 bg-white dark:bg-gray-900">
         <div className="container">
           <ScrollReveal>
             <div className="flex justify-between items-center mb-10">

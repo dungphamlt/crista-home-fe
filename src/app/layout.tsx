@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { CartProvider } from '@/lib/cart-context';
@@ -21,7 +22,9 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
         <ThemeProvider>
           <CartProvider>
-            <Header />
+            <Suspense fallback={<div className="h-14 bg-white dark:bg-gray-900 border-b border-gray-100" />}>
+              <Header />
+            </Suspense>
             <main className="flex-1">{children}</main>
             <Footer />
           </CartProvider>

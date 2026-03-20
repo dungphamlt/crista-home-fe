@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: [],
+  // Tránh lỗi MODULE_NOT_FOUND ./vendor-chunks/motion-dom.js (framer-motion + Next 15)
+  transpilePackages: ["framer-motion"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },

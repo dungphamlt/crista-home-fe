@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 import { useCart } from "@/lib/cart-context";
+import { CATEGORY_PARENT_CRISTA, CATEGORY_PARENT_TEWA } from "@/lib/category-brands";
+import { BrandMegaMenu } from "@/components/BrandMegaMenu";
 
 export function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -30,9 +32,9 @@ export function Header() {
     { href: "/lien-he", label: "Liên hệ" },
   ];
   const pathname = usePathname();
-  const isActive = (href: string) => {
-    return pathname === href;
-  };
+  const searchParams = useSearchParams();
+  const brandParam = searchParams.get("brand");
+  const isActive = (href: string) => pathname === href;
 
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900">
@@ -241,86 +243,32 @@ export function Header() {
               >
                 Giới thiệu
               </Link>
-              <div className="relative">
-                <button
-                  onClick={() => {
-                    setTewaOpen(!tewaOpen);
-                    setCristaOpen(false);
-                  }}
-                  className={`flex items-center gap-1 px-4 py-2 rounded-full bg-amber-gold-light hover:text-amber-gold font-semibold text-sm ${isActive("/san-pham?brand=tewa") ? "text-amber-gold" : ""}`}
-                >
-                  TEWA
-                  <svg
-                    className={`w-4 h-4 transition ${tewaOpen ? "rotate-180" : ""}`}
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <AnimatePresence>
-                  {tewaOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute top-full left-0 mt-1 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg min-w-[180px] z-50"
-                    >
-                      <Link
-                        href="/san-pham?brand=tewa"
-                        onClick={() => setTewaOpen(false)}
-                        className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-gray-700"
-                      >
-                        Sản phẩm TEWA
-                      </Link>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-              <div className="relative">
-                <button
-                  onClick={() => {
-                    setCristaOpen(!cristaOpen);
-                    setTewaOpen(false);
-                  }}
-                  className={`flex items-center gap-1 px-4 py-2 rounded-full bg-amber-gold-light hover:text-amber-gold font-semibold text-sm ${isActive("/san-pham?brand=crista") ? "text-amber-gold" : ""}`}
-                >
-                  CRISTA
-                  <svg
-                    className={`w-4 h-4 transition ${cristaOpen ? "rotate-180" : ""}`}
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <AnimatePresence>
-                  {cristaOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute top-full left-0 mt-1 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg min-w-[180px] z-50"
-                    >
-                      <Link
-                        href="/san-pham?brand=crista"
-                        onClick={() => setCristaOpen(false)}
-                        className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-gray-700"
-                      >
-                        Sản phẩm CRISTA
-                      </Link>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              <BrandMegaMenu
+                label="TEWA"
+                brandHref="/san-pham?brand=tewa"
+                rootParentId={CATEGORY_PARENT_TEWA}
+                isActive={brandParam === "tewa"}
+                isOpen={tewaOpen}
+                onOpen={() => {
+                  setTewaOpen(true);
+                  setCristaOpen(false);
+                }}
+                onClose={() => setTewaOpen(false)}
+                closeSibling={() => setCristaOpen(false)}
+              />
+              <BrandMegaMenu
+                label="CRISTA"
+                brandHref="/san-pham?brand=crista"
+                rootParentId={CATEGORY_PARENT_CRISTA}
+                isActive={brandParam === "crista"}
+                isOpen={cristaOpen}
+                onOpen={() => {
+                  setCristaOpen(true);
+                  setTewaOpen(false);
+                }}
+                onClose={() => setCristaOpen(false)}
+                closeSibling={() => setTewaOpen(false)}
+              />
               <Link
                 href="/tin-tuc"
                 className={`px-4 py-2 rounded-full bg-amber-gold-light hover:text-amber-gold font-semibold text-sm ${isActive("/tin-tuc") ? "text-amber-gold" : ""}`}
