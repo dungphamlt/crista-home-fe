@@ -1,24 +1,32 @@
-import { api, endpoints } from '@/lib/api';
-import { PLACEHOLDER_IMAGES } from '@/lib/constants';
-import Link from 'next/link';
-import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { api, endpoints } from "@/lib/api";
+import { PLACEHOLDER_IMAGES } from "@/lib/constants";
+import Link from "next/link";
+import Image from "next/image";
+import { notFound } from "next/navigation";
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   try {
     const res = await api.get(endpoints.blogBySlug(slug));
     const post = res.data;
     return {
-      title: `${post?.title || 'Tin tức'} - Crista Home`,
+      title: `${post?.title || "Tin tức"} - Crista Home`,
       description: post?.excerpt || post?.content?.slice(0, 160),
     };
   } catch {
-    return { title: 'Tin tức - Crista Home' };
+    return { title: "Tin tức - Crista Home" };
   }
 }
 
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BlogPostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   try {
     const res = await api.get(endpoints.blogBySlug(slug));
@@ -26,7 +34,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     if (!post) notFound();
 
     return (
-      <article className="container py-8 max-w-3xl">
+      <article className="container pt-8 pb-12 md:pb-20">
         <nav className="mb-6 text-sm text-gray-500">
           <Link href="/">Trang chủ</Link>
           <span className="mx-2">/</span>
@@ -48,7 +56,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         )}
         <div
           className="prose dark:prose-invert max-w-none"
-          dangerouslySetInnerHTML={{ __html: post.content || '' }}
+          dangerouslySetInnerHTML={{ __html: post.content || "" }}
         />
         {!post.content && post.excerpt && (
           <p className="text-gray-600 dark:text-gray-400">{post.excerpt}</p>

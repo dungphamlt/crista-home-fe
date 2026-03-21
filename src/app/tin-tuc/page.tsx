@@ -1,11 +1,11 @@
-import { api, endpoints } from '@/lib/api';
-import { PLACEHOLDER_IMAGES } from '@/lib/constants';
-import Link from 'next/link';
-import Image from 'next/image';
+import { api, endpoints } from "@/lib/api";
+import { PLACEHOLDER_IMAGES } from "@/lib/constants";
+import Link from "next/link";
+import Image from "next/image";
 
 export const metadata = {
-  title: 'Tin tức - Crista Home',
-  description: 'Tin tức và bài viết về đồ gia dụng, thủy tinh, gốm sứ',
+  title: "Tin tức - Crista Home",
+  description: "Tin tức và bài viết về đồ gia dụng, thủy tinh, gốm sứ",
 };
 
 export default async function BlogPage({
@@ -13,8 +13,17 @@ export default async function BlogPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  const { page = '1' } = await searchParams;
-  let data: { data: { _id: string; title: string; slug: string; excerpt?: string; thumbnail?: string }[]; totalPages: number } = {
+  const { page = "1" } = await searchParams;
+  let data: {
+    data: {
+      _id: string;
+      title: string;
+      slug: string;
+      excerpt?: string;
+      thumbnail?: string;
+    }[];
+    totalPages: number;
+  } = {
     data: [],
     totalPages: 1,
   };
@@ -26,7 +35,7 @@ export default async function BlogPage({
   }
 
   return (
-    <div className="container py-8">
+    <div className="container pt-8 pb-12 md:pb-20">
       <h1 className="text-2xl font-bold mb-8">Tin tức</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {data.data.map((post) => (
@@ -50,7 +59,9 @@ export default async function BlogPage({
                 {post.title}
               </h2>
               {post.excerpt && (
-                <p className="mt-2 text-sm text-gray-500 line-clamp-2">{post.excerpt}</p>
+                <p className="mt-2 text-sm text-gray-500 line-clamp-2">
+                  {post.excerpt}
+                </p>
               )}
             </div>
           </Link>
@@ -67,8 +78,8 @@ export default async function BlogPage({
               href={`/tin-tuc?page=${p}`}
               className={`px-4 py-2 rounded ${
                 p === parseInt(page, 10)
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300'
+                  ? "bg-primary-600 text-white"
+                  : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300"
               }`}
             >
               {p}

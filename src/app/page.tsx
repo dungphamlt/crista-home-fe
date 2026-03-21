@@ -13,9 +13,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { HeroBannerSlider } from "@/components/HeroBannerSlider";
 import {
+  LatestNewsCarousel,
+  type LatestNewsItem,
+} from "@/components/LatestNewsCarousel";
+import {
   CATEGORY_PARENT_CRISTA,
   CATEGORY_PARENT_TEWA,
 } from "@/lib/category-brands";
+
+function normalizeLatestBlogs(raw: unknown): LatestNewsItem[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw as LatestNewsItem[];
+  const r = raw as { data?: unknown };
+  if (Array.isArray(r.data)) return r.data as LatestNewsItem[];
+  return [];
+}
 
 async function getHomeData(): Promise<{
   categoriesCrista: {
@@ -37,26 +49,44 @@ async function getHomeData(): Promise<{
   featured: Product[];
   newProducts: Product[];
   banners: { image: string; title: string; link?: string }[];
+  latestBlogs: LatestNewsItem[];
 }> {
   try {
-    const [categoriesCrista, categoriesTewa, featuredRes, newRes, bannersRes] =
-      await Promise.all([
-        api.get(
-          endpoints.categories({
-            parentId: CATEGORY_PARENT_CRISTA,
-            withCount: true,
-          }),
-        ),
-        api.get(
-          endpoints.categories({
-            parentId: CATEGORY_PARENT_TEWA,
-            withCount: true,
-          }),
-        ),
-        api.get(endpoints.featuredProducts(12)),
-        api.get(endpoints.newProducts(12)),
-        api.get(endpoints.banners()),
-      ]);
+    const [
+      categoriesCrista,
+      categoriesTewa,
+      featuredRes,
+      newRes,
+      bannersRes,
+      latestBlogsRes,
+    ] = await Promise.all([
+      api.get(
+        endpoints.categories({
+          parentId: CATEGORY_PARENT_CRISTA,
+          withCount: true,
+        }),
+      ),
+      api.get(
+        endpoints.categories({
+          parentId: CATEGORY_PARENT_TEWA,
+          withCount: true,
+        }),
+      ),
+      api.get(endpoints.featuredProducts(12)),
+      api.get(endpoints.newProducts(12)),
+      api.get(endpoints.banners()),
+      api.get(endpoints.latestBlogs(4)).catch(() => ({ data: null })),
+    ]);
+    let latestBlogs = normalizeLatestBlogs(latestBlogsRes.data);
+    if (latestBlogs.length === 0) {
+      try {
+        const blogPage = await api.get(endpoints.blogs(1));
+        const body = blogPage.data as { data?: LatestNewsItem[] };
+        latestBlogs = (body?.data || []).slice(0, 4);
+      } catch {
+        latestBlogs = [];
+      }
+    }
     return {
       categoriesCrista:
         (categoriesCrista.data as {
@@ -79,6 +109,7 @@ async function getHomeData(): Promise<{
       featured: (featuredRes.data as Product[]) || [],
       newProducts: (newRes.data as Product[]) || [],
       banners: normalizeBanners(bannersRes.data),
+      latestBlogs,
     };
   } catch {
     return {
@@ -101,6 +132,7 @@ async function getHomeData(): Promise<{
       featured: [] as Product[],
       newProducts: [] as Product[],
       banners: [] as { image: string; title: string; link?: string }[],
+      latestBlogs: [] as LatestNewsItem[],
     };
   }
 }
@@ -139,8 +171,14 @@ function normalizeBanners(raw: unknown): {
 }
 
 export default async function HomePage() {
-  const { categoriesCrista, categoriesTewa, featured, newProducts, banners } =
-    await getHomeData();
+  const {
+    categoriesCrista,
+    categoriesTewa,
+    featured,
+    newProducts,
+    banners,
+    latestBlogs,
+  } = await getHomeData();
   const bannerList =
     banners.length > 0
       ? banners
@@ -339,6 +377,10 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {latestBlogs.length > 0 && (
+        <LatestNewsCarousel posts={latestBlogs} />
+      )}
     </div>
   );
 }
