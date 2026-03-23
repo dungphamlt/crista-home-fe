@@ -43,4 +43,15 @@ export const endpoints = {
   latestBlogs: (limit?: number) =>
     `/blogs/latest${limit ? `?limit=${limit}` : ""}`,
   banners: () => "/banners",
+  pages: (params?: { page?: number; limit?: number }) => {
+    const p = params || {};
+    const search = new URLSearchParams(
+      Object.entries(p)
+        .filter(([, v]) => v != null)
+        .map(([k, v]) => [k, String(v)]),
+    ).toString();
+    return `/pages${search ? `?${search}` : ""}`;
+  },
+  pageBySlug: (slug: string) => `/pages/slug/${slug}`,
+  page: (id: string) => `/pages/${id}`,
 };

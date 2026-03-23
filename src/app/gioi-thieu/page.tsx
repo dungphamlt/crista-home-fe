@@ -101,15 +101,17 @@ export default function AboutPage() {
                     <strong className="text-gray-900 dark:text-white font-medium">
                       CRISTA HOME
                     </strong>{" "}
-                    mang đến những tác phẩm thủy tinh không chỉ để sử dụng — mà để chiêm
-                    ngưỡng. Mỗi chiếc ly, bình, đĩa hay vật phẩm trang trí là sự giao hòa
-                    hoàn mỹ giữa nghệ thuật thủ công tinh xảo và công nghệ hiện đại.
+                    mang đến những tác phẩm thủy tinh không chỉ để sử dụng — mà
+                    để chiêm ngưỡng. Mỗi chiếc ly, bình, đĩa hay vật phẩm trang
+                    trí là sự giao hòa hoàn mỹ giữa nghệ thuật thủ công tinh xảo
+                    và công nghệ hiện đại.
                   </p>
                   <p>
-                    Chất liệu soda-lime cao cấp trong suốt như pha lê, phản chiếu ánh sáng rực
-                    rỡ; từng đường vân lưới dập nổi tạo hiệu ứng lung linh. CRISTA tôn vinh
-                    sự thanh lịch — từ ly nước hàng ngày đến quà tặng trang trọng, với tinh
-                    thần đẳng cấp, tinh khiết và vĩnh cửu như ánh sáng.
+                    Chất liệu soda-lime cao cấp trong suốt như pha lê, phản
+                    chiếu ánh sáng rực rỡ; từng đường vân lưới dập nổi tạo hiệu
+                    ứng lung linh. CRISTA tôn vinh sự thanh lịch — từ ly nước
+                    hàng ngày đến quà tặng trang trọng, với tinh thần đẳng cấp,
+                    tinh khiết và vĩnh cửu như ánh sáng.
                   </p>
                 </div>
               </ScrollReveal>
@@ -120,8 +122,8 @@ export default function AboutPage() {
                     CRISTA HOME – Để mỗi khoảnh khắc trở nên lung linh.
                   </p>
                   <p className="mt-4 text-sm md:text-base text-gray-500 dark:text-gray-400 not-italic font-sans leading-relaxed">
-                    Một chạm nhẹ của ánh sáng, một tuyên ngôn của phong cách. Đẳng cấp nằm
-                    trong từng chi tiết.
+                    Một chạm nhẹ của ánh sáng, một tuyên ngôn của phong cách.
+                    Đẳng cấp nằm trong từng chi tiết.
                   </p>
                 </blockquote>
               </ScrollReveal>
@@ -201,14 +203,18 @@ export default function AboutPage() {
                 <div className="space-y-6 text-[15px] md:text-base text-gray-600 dark:text-gray-400 leading-[1.9] font-sans">
                   <p>
                     Nếu CRISTA là tiếng thì thầm của ánh sáng, thì{" "}
-                    <strong className="text-gray-900 dark:text-white font-medium">TEWA</strong>{" "}
-                    là hơi thở của sự tinh giản và tiện nghi. Thương hiệu tạo nên gia dụng
-                    tinh gọn, bền bỉ — tổ ấm an yên, cân bằng giữa công năng và thẩm mỹ.
+                    <strong className="text-gray-900 dark:text-white font-medium">
+                      TEWA
+                    </strong>{" "}
+                    là hơi thở của sự tinh giản và tiện nghi. Thương hiệu tạo
+                    nên gia dụng tinh gọn, bền bỉ — tổ ấm an yên, cân bằng giữa
+                    công năng và thẩm mỹ.
                   </p>
                   <p>
-                    Mỗi sản phẩm được tạo tác tỉ mỉ, chất liệu chọn lọc, hướng đến bền vững
-                    và hài hòa trong không gian. TEWA truyền cảm hứng sống gọn gàng — nơi
-                    mọi vật dụng đều có ý nghĩa riêng trong tổng thể tổ ấm.
+                    Mỗi sản phẩm được tạo tác tỉ mỉ, chất liệu chọn lọc, hướng
+                    đến bền vững và hài hòa trong không gian. TEWA truyền cảm
+                    hứng sống gọn gàng — nơi mọi vật dụng đều có ý nghĩa riêng
+                    trong tổng thể tổ ấm.
                   </p>
                 </div>
               </ScrollReveal>
@@ -228,8 +234,8 @@ export default function AboutPage() {
 
               <ScrollReveal delay={0.18}>
                 <p className="font-serif text-lg italic text-gray-800 dark:text-gray-200 border-l-2 border-gray-900/20 dark:border-white/25 pl-6">
-                  TEWA – Sống tinh giản, chạm đến hoàn mỹ. Cân đối thẩm mỹ và công năng,
-                  hiện đại và bền lâu.
+                  TEWA – Sống tinh giản, chạm đến hoàn mỹ. Cân đối thẩm mỹ và
+                  công năng, hiện đại và bền lâu.
                 </p>
               </ScrollReveal>
             </div>

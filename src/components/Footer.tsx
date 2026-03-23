@@ -4,7 +4,7 @@ import { SocialSidebar } from "./SocialSidebar";
 
 const POLICY_LINKS = [
   {
-    href: "/chinh-sach/chinh-sach-quy-dinh",
+    href: "/chinh-sach/chinh-sach-va-quy-dinh-chung",
     label: "Chính sách và quy định chung",
   },
   { href: "/chinh-sach/chinh-sach-thanh-toan", label: "Chính sách thanh toán" },
@@ -13,7 +13,6 @@ const POLICY_LINKS = [
     href: "/chinh-sach/chinh-sach-doi-tra",
     label: "Chính sách đổi trả sản phẩm",
   },
-  { href: "/chinh-sach/dieu-khoan-su-dung", label: "Điều khoản sử dụng" },
 ];
 
 const FACEBOOK_CRISTA = "https://www.facebook.com/CristaaHome";
@@ -107,7 +106,11 @@ export function Footer() {
                     src={`https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(FACEBOOK_CRISTA)}&tabs=timeline&width=340&height=200&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true`}
                     width="340"
                     height="200"
-                    style={{ border: "none", overflow: "hidden", minWidth: 340 }}
+                    style={{
+                      border: "none",
+                      overflow: "hidden",
+                      minWidth: 340,
+                    }}
                     scrolling="no"
                     allowFullScreen
                     allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
@@ -125,7 +128,11 @@ export function Footer() {
                     src={`https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(FACEBOOK_TEWA)}&tabs=timeline&width=340&height=200&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true`}
                     width="340"
                     height="200"
-                    style={{ border: "none", overflow: "hidden", minWidth: 340 }}
+                    style={{
+                      border: "none",
+                      overflow: "hidden",
+                      minWidth: 340,
+                    }}
                     scrolling="no"
                     allowFullScreen
                     allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"

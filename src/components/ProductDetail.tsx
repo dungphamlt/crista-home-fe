@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PLACEHOLDER_IMAGES } from "@/lib/constants";
 import type { Product } from "@/types/product";
+import { NavLinks } from "./NavLinks";
 
 interface ProductDetailProps {
   product: {
@@ -102,6 +103,14 @@ export function ProductDetail({
 
   return (
     <div className="container py-8">
+      <NavLinks
+        items={[
+          { label: "Trang chủ", href: "/" },
+          { label: "Sản phẩm", href: "/san-pham" },
+          { label: product.name },
+        ]}
+      />
+
       {/* Main section: Image + 3 info boxes */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         {/* Left: Image gallery */}
@@ -294,6 +303,7 @@ export function ProductDetail({
           <div className="mt-6">
             {activeTab === "info" && (
               <div
+                className="ck-content"
                 dangerouslySetInnerHTML={{ __html: product.description || "" }}
               />
             )}

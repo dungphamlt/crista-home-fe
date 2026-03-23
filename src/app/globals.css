@@ -45,3 +45,41 @@ body {
     scrollbar-width: none;
   }
 }
+
+.ck-content ul,
+.ck-content ol {
+  padding-left: 20px;
+}
+
+.ck-content ul li {
+  line-height: 1.6;
+}
+
+.ck-content ul {
+  list-style-type: inherit;
+}
+.ck-content ul ul {
+  list-style-type: circle;
+}
+
+.ck-content ol {
+  list-style-type: inherit;
+}
+
+.ck-content h1,
+.ck-content h2,
+.ck-content h3,
+.ck-content h4,
+.ck-content h5,
+.ck-content h6 {
+  margin-bottom: 10px;
+}
+
+.ck-content p {
+  line-height: 1.6;
+}
+
+.ck-content figure img {
+  margin-top: 14px;
+  margin-bottom: 14px;
+}

@@ -6,7 +6,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 import { useCart } from "@/lib/cart-context";
-import { CATEGORY_PARENT_CRISTA, CATEGORY_PARENT_TEWA } from "@/lib/category-brands";
+import {
+  CATEGORY_PARENT_CRISTA,
+  CATEGORY_PARENT_TEWA,
+} from "@/lib/category-brands";
 import { BrandMegaMenu } from "@/components/BrandMegaMenu";
 
 export function Header() {
@@ -30,6 +33,7 @@ export function Header() {
     { href: "/gioi-thieu", label: "Giới thiệu" },
     { href: "/tin-tuc", label: "Tin tức" },
     { href: "/lien-he", label: "Liên hệ" },
+    { href: "/lien-he-lam-nha-phan-phoi", label: "Liên hệ làm nhà phân phối" },
   ];
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -215,7 +219,7 @@ export function Header() {
         <div className="container py-2">
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-6">
             {/* DANH MỤC button */}
-            <button
+            {/* <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-amber-gold text-white font-medium shrink-0 lg:mr-4"
             >
@@ -227,7 +231,7 @@ export function Header() {
                 />
               </svg>
               DANH MỤC
-            </button>
+            </button> */}
 
             {/* Nav links */}
             <nav className="hidden flex-1 lg:flex items-center gap-1 flex-wrap justify-between">
@@ -281,12 +285,18 @@ export function Header() {
               >
                 Liên hệ
               </Link>
+              <Link
+                href="/lien-he-lam-nha-phan-phoi"
+                className={`px-4 py-2 rounded-full bg-amber-gold-light hover:text-amber-gold font-semibold text-sm ${isActive("/nha-phan-phoi") ? "text-amber-gold" : ""}`}
+              >
+                Liên hệ làm nhà phân phối
+              </Link>
             </nav>
 
             {/* Red CTA - Hotline */}
             <a
               href="tel:0962453366"
-              className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold ml-auto shrink-0"
+              className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold ml-auto shrink-0 animate-bounce"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />

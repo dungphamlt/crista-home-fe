@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ContactForm } from "@/components/ContactForm";
+import { NavLinks } from "@/components/NavLinks";
 
 export const metadata: Metadata = {
   title: "Liên hệ - Crista Home",
@@ -15,8 +16,13 @@ const MAP_EMBED_SRC =
 export default function ContactPage() {
   return (
     <div className="bg-white dark:bg-gray-950">
+      <div className="container">
+        <NavLinks
+          items={[{ label: "Trang chủ", href: "/" }, { label: "Liên hệ" }]}
+        />
+      </div>
       {/* Form + ảnh */}
-      <section className="py-14 md:py-20 lg:py-24">
+      <section className="py-12">
         <div className="container max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 xl:gap-16 items-center">
             <div className="lg:col-span-5 order-1">
@@ -50,7 +56,7 @@ export default function ContactPage() {
                 Thông tin trụ sở và các kênh liên lạc của chúng tôi.
               </p>
 
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 flex-1">
+              <div className="mt-8 flex flex-col gap-4 flex-1">
                 <div className="flex gap-3">
                   <span className="shrink-0 w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-slate-700 dark:text-gray-300">
                     <MapPinIcon className="w-5 h-5" />
@@ -115,18 +121,6 @@ export default function ContactPage() {
                   </div>
                 </div>
               </div>
-
-              <div className="mt-10 pt-2">
-                <Link
-                  href="https://www.facebook.com/CristaaHome"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex w-11 h-11 rounded-full bg-[#1877F2] text-white items-center justify-center hover:opacity-90 transition shadow-md"
-                  aria-label="Facebook Crista Home"
-                >
-                  <FacebookIcon className="w-5 h-5" />
-                </Link>
-              </div>
             </div>
 
             <div className="lg:col-span-7 min-h-[300px] lg:min-h-[420px] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-md bg-gray-200 dark:bg-gray-800">
@@ -148,7 +142,12 @@ export default function ContactPage() {
 
 function MapPinIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -167,7 +166,12 @@ function MapPinIcon({ className }: { className?: string }) {
 
 function MailIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -180,7 +184,12 @@ function MailIcon({ className }: { className?: string }) {
 
 function PhoneIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -193,7 +202,12 @@ function PhoneIcon({ className }: { className?: string }) {
 
 function ClockIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
