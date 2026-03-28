@@ -10,6 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/gioi-thieu`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
     { url: `${SITE_URL}/lien-he`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
     { url: `${SITE_URL}/lien-he-lam-nha-phan-phoi`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.65 },
+    { url: `${SITE_URL}/yeu-cau-xoa-du-lieu`, lastModified: new Date(), changeFrequency: 'yearly' as const, priority: 0.4 },
     { url: `${SITE_URL}/gio-hang`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: `${SITE_URL}/don-hang`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
   ];

@@ -11,6 +11,7 @@ import {
   CATEGORY_PARENT_TEWA,
 } from "@/lib/category-brands";
 import { BrandMegaMenu } from "@/components/BrandMegaMenu";
+import Image from "next/image";
 
 export function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -86,19 +87,13 @@ export function Header() {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
             {/* Logo */}
             <Link href="/" className="flex items-baseline gap-1 shrink-0">
-              <span className="text-2xl font-serif text-gray-900 dark:text-white tracking-tight">
-                CRISTA
-              </span>
-              <span className="text-sm text-gray-500 dark:text-gray-400 font-light -ml-0.5">
-                home
-              </span>
-              <span className="text-gray-400 dark:text-gray-500 mx-1"> & </span>
-              <span className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-                TEWA
-              </span>
-              <span className="text-xs text-amber-800 dark:text-amber-600 ml-0.5">
-                テワ
-              </span>
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={260}
+                height={200}
+                className="w-[260px] h-auto object-contain"
+              />
             </Link>
 
             {/* Search */}
@@ -202,13 +197,13 @@ export function Header() {
                   </span>
                 )}
               </Link>
-              <button
+              {/* <button
                 onClick={toggleTheme}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
                 aria-label="Toggle theme"
               >
                 {theme === "light" ? "🌙" : "☀️"}
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

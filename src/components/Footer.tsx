@@ -13,6 +13,10 @@ const POLICY_LINKS = [
     href: "/chinh-sach/chinh-sach-doi-tra",
     label: "Chính sách đổi trả sản phẩm",
   },
+  // {
+  //   href: "/yeu-cau-xoa-du-lieu",
+  //   label: "Yêu cầu xóa dữ liệu (Facebook)",
+  // },
 ];
 
 const FACEBOOK_CRISTA = "https://www.facebook.com/CristaaHome";
