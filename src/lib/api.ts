@@ -26,6 +26,8 @@ export const endpoints = {
   authRegister: () => "/auth/register",
   /** GET — bắt đầu OAuth (redirect trình duyệt tới Google) */
   authGoogle: () => "/auth/google",
+  /** GET — bắt đầu OAuth (redirect trình duyệt tới Facebook) */
+  authFacebook: () => "/auth/facebook",
   categories: (options?: { parentId?: string; withCount?: boolean }) => {
     const params = new URLSearchParams();
     if (options?.parentId) params.set("parent", options.parentId);

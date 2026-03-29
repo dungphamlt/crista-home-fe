@@ -45,7 +45,7 @@ export function OAuthCallbackClient() {
       searchParams.get("access_token") || searchParams.get("token");
     if (!token) {
       setError(
-        "Thiếu access_token trong URL. Trên NestJS, sau OAuth hãy redirect về: " +
+        "Thiếu access_token trong URL. Sau OAuth (Google/Facebook), backend redirect về: " +
           `${typeof window !== "undefined" ? window.location.origin : ""}/dang-nhap/oauth?access_token=...&email=...&name=...`,
       );
       return;
