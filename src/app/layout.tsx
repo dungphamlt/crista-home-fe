@@ -3,6 +3,9 @@ import { Suspense } from "react";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { CartProvider } from "@/lib/cart-context";
+import { AuthProvider } from "@/lib/auth-context";
+import { AuthModal } from "@/components/AuthModal";
+import { AuthSearchParamsSync } from "@/components/AuthSearchParamsSync";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PLACEHOLDER_IMAGES, SITE_URL } from "@/lib/constants";
@@ -65,15 +68,21 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
         <ThemeProvider>
           <CartProvider>
-            <Suspense
-              fallback={
-                <div className="h-14 bg-white dark:bg-gray-900 border-b border-gray-100" />
-              }
-            >
-              <Header />
-            </Suspense>
-            <main className="flex-1">{children}</main>
-            <Footer />
+            <AuthProvider>
+              <Suspense fallback={null}>
+                <AuthSearchParamsSync />
+              </Suspense>
+              <AuthModal />
+              <Suspense
+                fallback={
+                  <div className="h-14 bg-white dark:bg-gray-900 border-b border-gray-100" />
+                }
+              >
+                <Header />
+              </Suspense>
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </AuthProvider>
           </CartProvider>
         </ThemeProvider>
       </body>

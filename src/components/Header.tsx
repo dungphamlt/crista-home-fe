@@ -6,16 +6,20 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 import { useCart } from "@/lib/cart-context";
+import { useAuth } from "@/lib/auth-context";
 import {
   CATEGORY_PARENT_CRISTA,
   CATEGORY_PARENT_TEWA,
 } from "@/lib/category-brands";
 import { BrandMegaMenu } from "@/components/BrandMegaMenu";
 import Image from "next/image";
+import { useMounted } from "@/hooks/useMounted";
 
 export function Header() {
+  const mounted = useMounted();
   const { theme, toggleTheme } = useTheme();
   const { itemCount } = useCart();
+  const { isAuthenticated, user, isReady, openAuthModal } = useAuth();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -38,7 +42,8 @@ export function Header() {
   ];
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const brandParam = searchParams.get("brand");
+  /** Chỉ đọc query sau mount — tránh hydration mismatch SSR vs client (Next useSearchParams). */
+  const brandParam = mounted ? searchParams.get("brand") : null;
   const isActive = (href: string) => pathname === href;
 
   return (
@@ -132,25 +137,69 @@ export function Header() {
 
             {/* Account, Wishlist, Cart */}
             <div className="flex items-center gap-6 shrink-0">
-              <Link
-                href="/tai-khoan"
-                className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 text-sm"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              {!mounted || !isReady ? (
+                <span
+                  className="h-5 w-24 rounded bg-gray-200 dark:bg-gray-700 animate-pulse"
+                  aria-hidden
+                />
+              ) : isAuthenticated ? (
+                <Link
+                  href="/tai-khoan"
+                  className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 text-sm max-w-[200px]"
+                  title={user?.email}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                Tài khoản
-              </Link>
+                  <svg
+                    className="w-5 h-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  <span className="truncate">
+                    {user?.name?.split(" ")[0] || user?.email?.split("@")[0] || "Tài khoản"}
+                  </span>
+                </Link>
+              ) : (
+                <div className="flex items-center gap-2 sm:gap-3 text-sm">
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal("login")}
+                    aria-label="Đăng nhập"
+                    className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400"
+                  >
+                    <svg
+                      className="w-5 h-5 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                    <span className="hidden sm:inline">Đăng nhập</span>
+                  </button>
+                  <span className="text-gray-300 dark:text-gray-600" aria-hidden>
+                    |
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal("register")}
+                    className="font-medium text-amber-700 dark:text-amber-400 hover:underline"
+                  >
+                    Đăng ký
+                  </button>
+                </div>
+              )}
               <Link
                 href="/yeu-thich"
                 className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 text-sm relative"
@@ -282,7 +331,7 @@ export function Header() {
               </Link>
               <Link
                 href="/lien-he-lam-nha-phan-phoi"
-                className={`px-4 py-2 rounded-full bg-amber-gold-light hover:text-amber-gold font-semibold text-sm ${isActive("/nha-phan-phoi") ? "text-amber-gold" : ""}`}
+                className={`px-4 py-2 rounded-full bg-amber-gold-light hover:text-amber-gold font-semibold text-sm ${isActive("/lien-he-lam-nha-phan-phoi") ? "text-amber-gold" : ""}`}
               >
                 Liên hệ làm nhà phân phối
               </Link>

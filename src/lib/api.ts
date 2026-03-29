@@ -7,7 +7,25 @@ export const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+api.interceptors.request.use((config) => {
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("crista-auth-token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
+export function getApiBaseUrl(): string {
+  return API_URL;
+}
+
 export const endpoints = {
+  authLogin: () => "/auth/login",
+  authRegister: () => "/auth/register",
+  /** GET — bắt đầu OAuth (redirect trình duyệt tới Google) */
+  authGoogle: () => "/auth/google",
   categories: (options?: { parentId?: string; withCount?: boolean }) => {
     const params = new URLSearchParams();
     if (options?.parentId) params.set("parent", options.parentId);
