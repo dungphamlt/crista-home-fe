@@ -102,11 +102,11 @@ function parseUserFromParams(searchParams: URLSearchParams): AuthUser | null {
   const email = searchParams.get("email") || searchParams.get("sub") || "";
   const id = searchParams.get("id");
   const name = searchParams.get("name") || undefined;
-  const role = searchParams.get("role") || "user";
+  const avatar = searchParams.get("avatar") || undefined;
 
   if (!id || !email) return null;
 
-  return { id, email, name, role };
+  return { id, email, name, avatar };
 }
 
 export function OAuthCallbackClient() {

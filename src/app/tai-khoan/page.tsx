@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import Image from "next/image";
 
 export default function AccountPage() {
   const { user, isReady, isAuthenticated, logout, openAuthModal } = useAuth();
@@ -18,7 +19,7 @@ export default function AccountPage() {
 
   if (!isAuthenticated || !user) {
     return (
-      <div className="container pt-12 pb-20 max-w-lg mx-auto text-center">
+      <div className="container pt-12 pb-20 max-w-lg mx-auto text-center min-h-[300px] md:min-h-[500px]">
         <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
           Tài khoản
         </h1>
@@ -61,6 +62,17 @@ export default function AccountPage() {
       </p>
 
       <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 shadow-sm space-y-4">
+        {user.avatar && (
+          <div className="flex items-center gap-2 justify-center">
+            <Image
+              src={user.avatar}
+              alt="Avatar"
+              width={50}
+              height={50}
+              className="w-10 h-10 rounded-full"
+            />
+          </div>
+        )}
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
             Email
@@ -75,12 +87,6 @@ export default function AccountPage() {
             <p className="text-gray-900 dark:text-white mt-1">{user.name}</p>
           </div>
         )}
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
-            Vai trò
-          </p>
-          <p className="text-gray-900 dark:text-white mt-1">{user.role}</p>
-        </div>
 
         <button
           type="button"
@@ -96,7 +102,10 @@ export default function AccountPage() {
       </div>
 
       <p className="mt-8 text-center text-sm">
-        <Link href="/" className="text-amber-700 dark:text-amber-400 hover:underline">
+        <Link
+          href="/"
+          className="text-amber-700 dark:text-amber-400 hover:underline"
+        >
           ← Về trang chủ
         </Link>
       </p>
