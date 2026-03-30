@@ -33,8 +33,6 @@ export function Header() {
     }
   };
 
-  console.log(user, "user");
-
   const navLinks = [
     { href: "/", label: "Trang chủ" },
     { href: "/gioi-thieu", label: "Giới thiệu" },
@@ -154,11 +152,17 @@ export function Header() {
                     <Image
                       src={user.avatar}
                       alt="Avatar"
-                      width={20}
-                      height={20}
-                      className="w-5 h-5 rounded-full"
+                      width={32}
+                      height={32}
+                      className="w-8 h-8 rounded-full"
                     />
-                  ) : null}
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700">
+                      <span className="text-gray-500 dark:text-gray-400">
+                        {user?.email?.split("@")[0]?.charAt(0)}
+                      </span>
+                    </div>
+                  )}
                   <span className="truncate">
                     {user?.name?.split(" ")[0] ||
                       user?.email?.split("@")[0] ||

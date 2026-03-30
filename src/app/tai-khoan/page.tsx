@@ -67,9 +67,9 @@ export default function AccountPage() {
             <Image
               src={user.avatar}
               alt="Avatar"
-              width={50}
-              height={50}
-              className="w-10 h-10 rounded-full"
+              width={112}
+              height={112}
+              className="w-28 h-28 rounded-full"
             />
           </div>
         )}
