@@ -151,9 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     ],
   );
 
-  return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 function normalizeUser(raw: AuthUser & { id?: unknown }): AuthUser {

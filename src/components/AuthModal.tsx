@@ -75,7 +75,14 @@ export function AuthModal() {
 
   const mode = authModal;
 
+  // ✅ Fix: reset toàn bộ fields khi đóng/mở modal
   const resetForms = useCallback(() => {
+    setLoginEmail("");
+    setLoginPassword("");
+    setRegName("");
+    setRegEmail("");
+    setRegPassword("");
+    setRegPassword2("");
     setLoginError(null);
     setRegError(null);
     setLoginBanner(null);
@@ -109,7 +116,8 @@ export function AuthModal() {
 
   if (!mode) return null;
 
-  const apiBase = getApiBaseUrl();
+  // ✅ Fix: trim trailing slash để tránh double slash trong URL
+  const apiBase = getApiBaseUrl().replace(/\/$/, "");
   const googleUrl = `${apiBase}${endpoints.authGoogle()}`;
   const facebookUrl = `${apiBase}${endpoints.authFacebook()}`;
 
@@ -154,7 +162,9 @@ export function AuthModal() {
       setLoginBanner("Đăng ký thành công. Vui lòng đăng nhập.");
       openAuthModal("login");
     } catch (err) {
-      setRegError(formatAxiosMessage(err, "Không thể đăng ký. Vui lòng thử lại."));
+      setRegError(
+        formatAxiosMessage(err, "Không thể đăng ký. Vui lòng thử lại."),
+      );
     } finally {
       setRegLoading(false);
     }
@@ -174,6 +184,7 @@ export function AuthModal() {
         onClick={closeAuthModal}
       />
       <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl shadow-black/20">
+        {/* Header tabs */}
         <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-gray-100 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur px-4 py-3">
           <div className="flex rounded-lg bg-gray-100 dark:bg-gray-800 p-0.5">
             <button
@@ -205,18 +216,31 @@ export function AuthModal() {
             className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
             aria-label="Đóng hộp thoại"
           >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
 
         <div className="p-5 md:p-6">
+          {/* ── LOGIN ── */}
           {mode === "login" && (
             <>
               <h2 id={`${baseId}-title`} className="sr-only">
                 Đăng nhập Crista Home
               </h2>
+
+              {/* Social login */}
               <div className="mb-6 flex flex-col gap-3">
                 <a
                   href={googleUrl}
@@ -234,6 +258,7 @@ export function AuthModal() {
                 </a>
               </div>
 
+              {/* Divider */}
               <div className="relative mb-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-200 dark:border-gray-600" />
@@ -245,6 +270,7 @@ export function AuthModal() {
                 </div>
               </div>
 
+              {/* Login form */}
               <form onSubmit={handleLogin} className="space-y-4">
                 {loginBanner && (
                   <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 px-3 py-2 text-sm text-emerald-800 dark:text-emerald-200">
@@ -260,7 +286,10 @@ export function AuthModal() {
                   </div>
                 )}
                 <div>
-                  <label htmlFor={`${baseId}-lemail`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label
+                    htmlFor={`${baseId}-lemail`}
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
                     Email
                   </label>
                   <input
@@ -274,7 +303,10 @@ export function AuthModal() {
                   />
                 </div>
                 <div>
-                  <label htmlFor={`${baseId}-lpw`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label
+                    htmlFor={`${baseId}-lpw`}
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
                     Mật khẩu
                   </label>
                   <input
@@ -290,14 +322,27 @@ export function AuthModal() {
                 <button
                   type="submit"
                   disabled={loginLoading}
-                  className="w-full rounded-xl bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-semibold py-3 disabled:opacity-60"
+                  className="w-full rounded-xl bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-semibold py-3 disabled:opacity-60 transition"
                 >
                   {loginLoading ? "Đang xử lý…" : "Đăng nhập"}
                 </button>
               </form>
+
+              {/* ✅ Thêm link sang register */}
+              <p className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                Chưa có tài khoản?{" "}
+                <button
+                  type="button"
+                  onClick={() => openAuthModal("register")}
+                  className="font-semibold text-amber-600 dark:text-amber-400 hover:underline"
+                >
+                  Đăng ký ngay
+                </button>
+              </p>
             </>
           )}
 
+          {/* ── REGISTER ── */}
           {mode === "register" && (
             <>
               <h2 id={`${baseId}-title`} className="sr-only">
@@ -313,8 +358,14 @@ export function AuthModal() {
                   </div>
                 )}
                 <div>
-                  <label htmlFor={`${baseId}-rname`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Họ tên <span className="text-gray-400 font-normal">(tuỳ chọn)</span>
+                  <label
+                    htmlFor={`${baseId}-rname`}
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
+                    Họ tên{" "}
+                    <span className="text-gray-400 font-normal">
+                      (tuỳ chọn)
+                    </span>
                   </label>
                   <input
                     id={`${baseId}-rname`}
@@ -326,7 +377,10 @@ export function AuthModal() {
                   />
                 </div>
                 <div>
-                  <label htmlFor={`${baseId}-remail`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label
+                    htmlFor={`${baseId}-remail`}
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
                     Email
                   </label>
                   <input
@@ -340,7 +394,10 @@ export function AuthModal() {
                   />
                 </div>
                 <div>
-                  <label htmlFor={`${baseId}-rpw`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label
+                    htmlFor={`${baseId}-rpw`}
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
                     Mật khẩu
                   </label>
                   <input
@@ -354,7 +411,10 @@ export function AuthModal() {
                   />
                 </div>
                 <div>
-                  <label htmlFor={`${baseId}-rpw2`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label
+                    htmlFor={`${baseId}-rpw2`}
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
                     Xác nhận mật khẩu
                   </label>
                   <input
@@ -370,14 +430,27 @@ export function AuthModal() {
                 <button
                   type="submit"
                   disabled={regLoading}
-                  className="w-full rounded-xl bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-semibold py-3 disabled:opacity-60"
+                  className="w-full rounded-xl bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-semibold py-3 disabled:opacity-60 transition"
                 >
                   {regLoading ? "Đang xử lý…" : "Tạo tài khoản"}
                 </button>
               </form>
+
+              {/* ✅ Thêm link sang login */}
+              <p className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                Đã có tài khoản?{" "}
+                <button
+                  type="button"
+                  onClick={() => openAuthModal("login")}
+                  className="font-semibold text-amber-600 dark:text-amber-400 hover:underline"
+                >
+                  Đăng nhập
+                </button>
+              </p>
             </>
           )}
 
+          {/* Terms */}
           <p className="mt-5 text-center text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
             Bằng việc tiếp tục, bạn đồng ý với{" "}
             <Link
