@@ -9,10 +9,12 @@ import {
   useState,
 } from "react";
 import { api, endpoints } from "@/lib/api";
+import {
+  getAuthData,
+  removeAuthData,
+  setAuthData,
+} from "@/lib/auth-cookie";
 import type { AuthUser } from "@/types/auth";
-
-const TOKEN_KEY = "crista-auth-token";
-const USER_KEY = "crista-auth-user";
 
 export type AuthModalMode = "login" | "register";
 
@@ -30,22 +32,11 @@ type AuthContextValue = {
     password: string;
     name?: string;
   }) => Promise<{ loggedIn: boolean }>;
-  logout: () => void;
-  setSession: (accessToken: string, user: AuthUser) => void;
+  logout: () => Promise<void>;
+  setSession: (accessToken: string, user: AuthUser) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-
-function readStoredUser(): AuthUser | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(USER_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as AuthUser;
-  } catch {
-    return null;
-  }
-}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -54,21 +45,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authModal, setAuthModal] = useState<AuthModalMode | null>(null);
 
   useEffect(() => {
-    try {
-      const t = localStorage.getItem(TOKEN_KEY);
-      const u = readStoredUser();
-      if (t && u) {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { token: t, user: u } = await getAuthData();
+        if (cancelled) return;
         setToken(t);
         setUser(u);
+      } finally {
+        if (!cancelled) setIsReady(true);
       }
-    } finally {
-      setIsReady(true);
-    }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const persist = useCallback((t: string, u: AuthUser) => {
-    localStorage.setItem(TOKEN_KEY, t);
-    localStorage.setItem(USER_KEY, JSON.stringify(u));
+  useEffect(() => {
+    const onAuthChange = (e: Event) => {
+      const ce = e as CustomEvent<{
+        token: string | null;
+        user: AuthUser | null;
+      }>;
+      setToken(ce.detail?.token ?? null);
+      setUser(ce.detail?.user ?? null);
+    };
+    window.addEventListener("auth-storage-change", onAuthChange);
+    return () =>
+      window.removeEventListener("auth-storage-change", onAuthChange);
+  }, []);
+
+  const persist = useCallback(async (t: string, u: AuthUser) => {
+    await setAuthData(t, u);
     setToken(t);
     setUser(u);
   }, []);
@@ -82,8 +90,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setSession = useCallback(
-    (accessToken: string, u: AuthUser) => {
-      persist(accessToken, normalizeUser(u as AuthUser & { id?: unknown }));
+    async (accessToken: string, u: AuthUser) => {
+      await persist(accessToken, normalizeUser(u as AuthUser & { id?: unknown }));
     },
     [persist],
   );
@@ -98,7 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!body?.access_token || !body?.user) {
         throw new Error("Phản hồi đăng nhập không hợp lệ");
       }
-      persist(body.access_token, normalizeUser(body.user));
+      await persist(body.access_token, normalizeUser(body.user));
     },
     [persist],
   );
@@ -108,7 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data } = await api.post(endpoints.authRegister(), payload);
       const body = data as { access_token?: string; user?: AuthUser };
       if (body?.access_token && body?.user) {
-        persist(body.access_token, normalizeUser(body.user));
+        await persist(body.access_token, normalizeUser(body.user));
         return { loggedIn: true };
       }
       return { loggedIn: false };
@@ -116,9 +124,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [persist],
   );
 
-  const logout = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+  const logout = useCallback(async () => {
+    await removeAuthData();
     setToken(null);
     setUser(null);
   }, []);

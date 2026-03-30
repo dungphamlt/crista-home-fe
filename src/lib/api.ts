@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getAuthTokenForApi } from "@/lib/auth-cookie";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 
@@ -9,7 +10,7 @@ export const api = axios.create({
 
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("crista-auth-token");
+    const token = getAuthTokenForApi();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

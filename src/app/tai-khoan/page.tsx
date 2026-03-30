@@ -84,8 +84,8 @@ export default function AccountPage() {
 
         <button
           type="button"
-          onClick={() => {
-            logout();
+          onClick={async () => {
+            await logout();
             router.push("/");
             router.refresh();
           }}

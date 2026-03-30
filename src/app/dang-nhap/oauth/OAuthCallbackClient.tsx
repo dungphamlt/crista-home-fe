@@ -122,47 +122,53 @@ export function OAuthCallbackClient() {
     if (handled.current) return;
     handled.current = true;
 
-    const merged = mergeUrlOAuthParams(searchParams);
+    void (async () => {
+      try {
+        const merged = mergeUrlOAuthParams(searchParams);
 
-    // Kiểm tra lỗi OAuth
-    const oauthErr = merged.get("error") || merged.get("error_description");
-    if (oauthErr) {
-      setError(
-        typeof oauthErr === "string"
-          ? decodeURIComponent(oauthErr)
-          : "OAuth thất bại.",
-      );
-      return;
-    }
+        const oauthErr = merged.get("error") || merged.get("error_description");
+        if (oauthErr) {
+          setError(
+            typeof oauthErr === "string"
+              ? decodeURIComponent(oauthErr)
+              : "OAuth thất bại.",
+          );
+          return;
+        }
 
-    // Thử parse embedded JSON response
-    const embedded = tryEmbeddedOAuthResponse(merged);
-    if (embedded) {
-      setSession(embedded.access_token, embedded.user);
-      router.replace("/");
-      return;
-    }
+        const embedded = tryEmbeddedOAuthResponse(merged);
+        if (embedded) {
+          await setSession(embedded.access_token, embedded.user);
+          router.replace("/");
+          return;
+        }
 
-    // Thử lấy token từ query param
-    const token = merged.get("access_token") || merged.get("token");
-    if (!token) {
-      setError(
-        "Thiếu access_token trong URL. Sau khi Google redirect về backend, backend cần redirect về: " +
-          `${typeof window !== "undefined" ? window.location.origin : ""}/dang-nhap/oauth?access_token=...&user=... (JSON) hoặc &email=...&id=...&name=...`,
-      );
-      return;
-    }
+        const token = merged.get("access_token") || merged.get("token");
+        if (!token) {
+          setError(
+            "Thiếu access_token trong URL. Sau khi Google redirect về backend, backend cần redirect về: " +
+              `${typeof window !== "undefined" ? window.location.origin : ""}/dang-nhap/oauth?access_token=...&user=... (JSON) hoặc &email=...&id=...&name=...`,
+          );
+          return;
+        }
 
-    const user = parseUserFromParams(merged);
-    if (!user || !user.email) {
-      setError(
-        "Thiếu thông tin user. Thêm query user (JSON encode), hoặc id + email + name khi redirect từ backend.",
-      );
-      return;
-    }
+        const user = parseUserFromParams(merged);
+        if (!user || !user.email) {
+          setError(
+            "Thiếu thông tin user. Thêm query user (JSON encode), hoặc id + email + name khi redirect từ backend.",
+          );
+          return;
+        }
 
-    setSession(token, user);
-    router.replace("/");
+        await setSession(token, user);
+        router.replace("/");
+      } catch (e) {
+        handled.current = false;
+        setError(
+          e instanceof Error ? e.message : "Không lưu được phiên đăng nhập.",
+        );
+      }
+    })();
   }, [searchParams, router, setSession]);
 
   if (error) {
