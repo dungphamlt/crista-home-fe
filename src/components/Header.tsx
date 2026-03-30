@@ -158,7 +158,7 @@ export function Header() {
                     />
                   ) : (
                     <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-                      <span className="text-gray-500 dark:text-gray-400 text-lg font-medium text-center uppercase">
+                      <span className="text-amber-gold text-lg font-medium text-center uppercase">
                         {user?.email?.split("@")[0]?.charAt(0)}
                       </span>
                     </div>

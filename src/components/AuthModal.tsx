@@ -247,14 +247,14 @@ export function AuthModal() {
                   className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 py-3 px-4 text-sm font-semibold text-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700/80 transition"
                 >
                   <GoogleIcon className="h-5 w-5 shrink-0" />
-                  Tiếp tục với Google
+                  Đăng nhập với Google
                 </a>
                 <a
                   href={facebookUrl}
                   className="flex w-full items-center justify-center gap-3 rounded-xl border border-[#1877F2]/30 dark:border-[#1877F2]/40 bg-[#1877F2] py-3 px-4 text-sm font-semibold text-white hover:bg-[#166fe5] transition"
                 >
                   <FacebookIcon className="h-5 w-5 shrink-0" />
-                  Tiếp tục với Facebook
+                  Đăng nhập với Facebook
                 </a>
               </div>
 
