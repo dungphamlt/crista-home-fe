@@ -98,6 +98,8 @@ function parseUserFromParams(searchParams: URLSearchParams): AuthUser | null {
     }
   }
 
+  console.log(searchParams, "searchParams");
+
   // ✅ Fix: guard chặt hơn — không fallback id về "oauth"
   const email = searchParams.get("email") || searchParams.get("sub") || "";
   const id = searchParams.get("id");

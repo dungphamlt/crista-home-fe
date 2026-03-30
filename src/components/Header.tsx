@@ -33,6 +33,8 @@ export function Header() {
     }
   };
 
+  console.log(user, "user");
+
   const navLinks = [
     { href: "/", label: "Trang chủ" },
     { href: "/gioi-thieu", label: "Giới thiệu" },
