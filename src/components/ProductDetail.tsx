@@ -102,7 +102,7 @@ export function ProductDetail({
   };
 
   return (
-    <div className="container py-8">
+    <div className="container py-8 mb-6 lg:mb-16">
       <NavLinks
         items={[
           { label: "Trang chủ", href: "/" },
@@ -144,15 +144,15 @@ export function ProductDetail({
               </svg>
             </button>
           </div>
-          <div className="flex gap-2">
-            {images.slice(0, 4).map((img, i) => (
+          <div className="flex flex-wrap gap-2 lg:gap-3">
+            {images.map((img, i) => (
               <button
                 key={`${img}-${i}`}
                 onClick={() => setMainImage(img)}
-                className={`w-20 h-20 shrink-0 relative rounded-lg overflow-hidden border-2 transition ${
+                className={`w-20 h-20 shrink-0 relative rounded-lg overflow-hidden transition ${
                   mainImage === img
-                    ? "border-gray-900 dark:border-white"
-                    : "border-gray-200 dark:border-gray-600"
+                    ? "border-amber-gold border-2 dark:border-white"
+                    : "border-gray-400 border dark:border-gray-600"
                 }`}
               >
                 <Image

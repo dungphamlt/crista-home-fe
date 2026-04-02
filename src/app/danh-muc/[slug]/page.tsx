@@ -67,7 +67,7 @@ export default async function CategoryPage({
   if (!category) notFound();
 
   return (
-    <div className="container py-8">
+    <div className="container py-8 mb-6 lg:mb-16">
       <NavLinks
         className="dark:text-gray-400"
         items={[
