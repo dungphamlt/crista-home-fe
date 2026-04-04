@@ -556,12 +556,20 @@ export function ProductDetail({
               >
                 <div className="w-16 h-16 md:w-24 md:h-24 shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
                   <Image
-                    src={p.images?.[0] || PLACEHOLDER_IMAGES.product}
+                    src={
+                      p.coverImage ||
+                      p.images?.[0] ||
+                      PLACEHOLDER_IMAGES.product
+                    }
                     alt={p.name}
                     width={96}
                     height={96}
                     className="object-cover w-full h-full group-hover:scale-105 transition"
-                    unoptimized={(p.images?.[0] || "").startsWith("http")}
+                    unoptimized={(
+                      p.coverImage ||
+                      p.images?.[0] ||
+                      ""
+                    ).startsWith("http")}
                   />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -676,7 +684,11 @@ export function ProductDetail({
                 <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                   <div className="aspect-square relative bg-gray-100 dark:bg-gray-700">
                     <Image
-                      src={p.images?.[0] || PLACEHOLDER_IMAGES.product}
+                      src={
+                        p.coverImage ||
+                        p.images?.[0] ||
+                        PLACEHOLDER_IMAGES.product
+                      }
                       alt={p.name}
                       width={256}
                       height={256}

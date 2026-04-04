@@ -1,4 +1,4 @@
-import { api, endpoints } from "@/lib/api";
+import { endpoints, fetchApiCached } from "@/lib/api";
 import { PLACEHOLDER_IMAGES } from "@/lib/constants";
 import { ProductCard } from "@/components/ProductCard";
 import type { Product } from "@/types/product";
@@ -29,23 +29,26 @@ function normalizeLatestBlogs(raw: unknown): LatestNewsItem[] {
   return [];
 }
 
+type HomeCategoryItem = {
+  _id: string;
+  name: string;
+  slug: string;
+  image?: string;
+  productCount?: number;
+  order?: number;
+};
+
+function normalizeCategoryList(raw: unknown): HomeCategoryItem[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw as HomeCategoryItem[];
+  const r = raw as { data?: unknown };
+  if (Array.isArray(r.data)) return r.data as HomeCategoryItem[];
+  return [];
+}
+
 async function getHomeData(): Promise<{
-  categoriesCrista: {
-    _id: string;
-    name: string;
-    slug: string;
-    image?: string;
-    productCount?: number;
-    order?: number;
-  }[];
-  categoriesTewa: {
-    _id: string;
-    name: string;
-    slug: string;
-    image?: string;
-    productCount?: number;
-    order?: number;
-  }[];
+  categoriesCrista: HomeCategoryItem[];
+  categoriesTewa: HomeCategoryItem[];
   featured: Product[];
   newProducts: Product[];
   banners: { image: string; title: string; link?: string }[];
@@ -60,75 +63,46 @@ async function getHomeData(): Promise<{
       bannersRes,
       latestBlogsRes,
     ] = await Promise.all([
-      api.get(
+      fetchApiCached(
         endpoints.categories({
           parentId: CATEGORY_PARENT_CRISTA,
           withCount: true,
         }),
       ),
-      api.get(
+      fetchApiCached(
         endpoints.categories({
           parentId: CATEGORY_PARENT_TEWA,
           withCount: true,
         }),
       ),
-      api.get(endpoints.featuredProducts(12)),
-      api.get(endpoints.newProducts(12)),
-      api.get(endpoints.banners()),
-      api.get(endpoints.latestBlogs(4)).catch(() => ({ data: null })),
+      fetchApiCached(endpoints.featuredProducts(12)),
+      fetchApiCached(endpoints.newProducts(12)),
+      fetchApiCached(endpoints.banners()),
+      fetchApiCached(endpoints.latestBlogs(4)).catch(() => null),
     ]);
-    let latestBlogs = normalizeLatestBlogs(latestBlogsRes.data);
+    let latestBlogs = normalizeLatestBlogs(latestBlogsRes);
     if (latestBlogs.length === 0) {
       try {
-        const blogPage = await api.get(endpoints.blogs(1));
-        const body = blogPage.data as { data?: LatestNewsItem[] };
+        const body = (await fetchApiCached(endpoints.blogs(1))) as {
+          data?: LatestNewsItem[];
+        };
         latestBlogs = (body?.data || []).slice(0, 4);
       } catch {
         latestBlogs = [];
       }
     }
     return {
-      categoriesCrista:
-        (categoriesCrista.data as {
-          _id: string;
-          name: string;
-          slug: string;
-          image?: string;
-          productCount?: number;
-          order?: number;
-        }[]) || [],
-      categoriesTewa:
-        (categoriesTewa.data as {
-          _id: string;
-          name: string;
-          slug: string;
-          image?: string;
-          productCount?: number;
-          order?: number;
-        }[]) || [],
-      featured: (featuredRes.data as Product[]) || [],
-      newProducts: (newRes.data as Product[]) || [],
-      banners: normalizeBanners(bannersRes.data),
+      categoriesCrista: normalizeCategoryList(categoriesCrista),
+      categoriesTewa: normalizeCategoryList(categoriesTewa),
+      featured: (featuredRes as Product[]) || [],
+      newProducts: (newRes as Product[]) || [],
+      banners: normalizeBanners(bannersRes),
       latestBlogs,
     };
   } catch {
     return {
-      categoriesCrista: [] as {
-        _id: string;
-        name: string;
-        slug: string;
-        image?: string;
-        productCount?: number;
-        order?: number;
-      }[],
-      categoriesTewa: [] as {
-        _id: string;
-        name: string;
-        slug: string;
-        image?: string;
-        productCount?: number;
-        order?: number;
-      }[],
+      categoriesCrista: [] as HomeCategoryItem[],
+      categoriesTewa: [] as HomeCategoryItem[],
       featured: [] as Product[],
       newProducts: [] as Product[],
       banners: [] as { image: string; title: string; link?: string }[],
@@ -143,9 +117,7 @@ function normalizeBanners(raw: unknown): {
   link?: string;
 }[] {
   if (!raw) return [];
-  const arr = Array.isArray(raw)
-    ? raw
-    : (raw as { data?: unknown }).data;
+  const arr = Array.isArray(raw) ? raw : (raw as { data?: unknown }).data;
   if (!Array.isArray(arr)) return [];
   return arr
     .map((item: unknown) => {
@@ -179,6 +151,7 @@ export default async function HomePage() {
     banners,
     latestBlogs,
   } = await getHomeData();
+  console.log(categoriesCrista, "categoriesCrista");
   const bannerList =
     banners.length > 0
       ? banners
@@ -246,18 +219,9 @@ export default async function HomePage() {
               </h2>
             </ScrollReveal>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-              {categoriesCrista.slice(0, 6).map(
-                (
-                  cat: {
-                    _id: string;
-                    name: string;
-                    slug: string;
-                    image?: string;
-                    productCount?: number;
-                    order?: number;
-                  },
-                  i: number,
-                ) => (
+              {categoriesCrista
+                .slice(0, 6)
+                .map((cat: HomeCategoryItem, i: number) => (
                   <ScrollReveal key={cat._id} delay={i * 0.05}>
                     <Link
                       href={`/danh-muc/${cat.slug}`}
@@ -277,13 +241,11 @@ export default async function HomePage() {
                         {cat.name}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        {cat.order ? `#${cat.order}` : (cat.productCount ?? 0)}{" "}
-                        Sản phẩm
+                        #{cat.productCount ?? 0} Sản phẩm
                       </p>
                     </Link>
                   </ScrollReveal>
-                ),
-              )}
+                ))}
             </div>
           </div>
         </section>
@@ -378,9 +340,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {latestBlogs.length > 0 && (
-        <LatestNewsCarousel posts={latestBlogs} />
-      )}
+      {latestBlogs.length > 0 && <LatestNewsCarousel posts={latestBlogs} />}
     </div>
   );
 }

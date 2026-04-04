@@ -22,6 +22,18 @@ export function getApiBaseUrl(): string {
   return API_URL;
 }
 
+/** Dùng với `fetch` (Server Components) — axios không hỗ trợ `next.revalidate`. */
+export async function fetchApiCached<T>(path: string): Promise<T> {
+  const res = await fetch(`${getApiBaseUrl()}${path}`, {
+    headers: { "Content-Type": "application/json" },
+    next: { revalidate: 300 },
+  });
+  if (!res.ok) {
+    throw new Error(`API ${path} failed: ${res.status}`);
+  }
+  return res.json() as Promise<T>;
+}
+
 export const endpoints = {
   authLogin: () => "/auth/login",
   authRegister: () => "/auth/register",
