@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PLACEHOLDER_IMAGES } from "@/lib/constants";
@@ -139,9 +133,7 @@ export function ProductDetail({
     variants.length > 0 ? variants[selectedVariantIndex] : undefined;
 
   const productFallbackSingle =
-    product.coverImage ||
-    product.images?.[0] ||
-    PLACEHOLDER_IMAGES.product;
+    product.coverImage || product.images?.[0] || PLACEHOLDER_IMAGES.product;
 
   const mergedGallery = useMemo(
     () => mergeProductAndVariantGallery(product, product.variants ?? []),
@@ -319,7 +311,7 @@ export function ProductDetail({
                 </div>
               </>
             )}
-            <button
+            {/* <button
               className="absolute top-3 left-3 z-10 w-10 h-10 bg-white/90 dark:bg-gray-800/90 rounded-lg flex items-center justify-center shadow-md hover:bg-white transition"
               aria-label="Phóng to"
             >
@@ -336,7 +328,7 @@ export function ProductDetail({
                   d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
                 />
               </svg>
-            </button>
+            </button> */}
           </div>
           {displayGallery.length > 0 && (
             <div className="flex gap-2 lg:gap-3 overflow-x-auto scroll-smooth pb-1 snap-x snap-mandatory [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5">
