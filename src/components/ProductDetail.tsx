@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PLACEHOLDER_IMAGES } from "@/lib/constants";
@@ -43,15 +49,44 @@ function getVariantImageUrls(v: ProductVariant | undefined): string[] {
   return [];
 }
 
-/** Gallery hiển thị khi đã chọn biến thể — fallback ảnh sản phẩm */
-function galleryForVariant(
-  v: ProductVariant | undefined,
-  fallback: string[] | undefined,
+/** Tất cả ảnh SP (cover + images) + tất cả ảnh mọi biến thể; loại trùng URL. */
+function mergeProductAndVariantGallery(
+  p: ProductDetailProps["product"],
+  variantsList: ProductVariant[],
 ): string[] {
-  const fromVariant = getVariantImageUrls(v);
-  if (fromVariant.length) return fromVariant;
-  if (fallback?.length) return fallback;
-  return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+
+  const push = (url: string | undefined) => {
+    if (!url || seen.has(url)) return;
+    seen.add(url);
+    out.push(url);
+  };
+
+  if (p.coverImage) push(p.coverImage);
+  for (const img of p.images || []) push(img);
+  for (const v of variantsList) {
+    for (const u of getVariantImageUrls(v)) push(u);
+  }
+
+  if (out.length === 0) push(PLACEHOLDER_IMAGES.product);
+  return out;
+}
+
+/** Slide đầu tiên trong `urls` hiển thị ảnh của biến thể (sau dedupe). */
+function resolveSlideIndexForVariant(
+  urls: string[],
+  v: ProductVariant,
+  fallbackSingle: string,
+): number {
+  const vu = getVariantImageUrls(v);
+  for (const u of vu) {
+    const idx = urls.indexOf(u);
+    if (idx >= 0) return idx;
+  }
+  const fb = urls.indexOf(fallbackSingle);
+  if (fb >= 0) return fb;
+  return 0;
 }
 
 function StarRating({
@@ -103,24 +138,75 @@ export function ProductDetail({
   const selectedVariant =
     variants.length > 0 ? variants[selectedVariantIndex] : undefined;
 
-  const firstVariant = variants[0];
-  const initialGallery = galleryForVariant(firstVariant, product.images);
-  const initialMain =
-    initialGallery[0] || product.images?.[0] || PLACEHOLDER_IMAGES.product;
+  const productFallbackSingle =
+    product.coverImage ||
+    product.images?.[0] ||
+    PLACEHOLDER_IMAGES.product;
 
-  const [mainImage, setMainImage] = useState(initialMain);
+  const mergedGallery = useMemo(
+    () => mergeProductAndVariantGallery(product, product.variants ?? []),
+    [product],
+  );
+
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<"info" | "reviews" | "comments">(
     "info",
   );
   const [comment, setComment] = useState("");
+  const mainGalleryScrollRef = useRef<HTMLDivElement>(null);
+  const thumbBtnRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  const displayGallery =
-    variants.length > 0
-      ? galleryForVariant(selectedVariant, product.images)
-      : product.images?.length
-        ? product.images
-        : [PLACEHOLDER_IMAGES.product];
+  /** Dải thumbnail: ảnh sản phẩm + ảnh tất cả biến thể (trùng URL chỉ hiện một lần). */
+  const displayGallery = mergedGallery;
+
+  const scrollToSlide = useCallback(
+    (index: number) => {
+      const el = mainGalleryScrollRef.current;
+      if (!el) return;
+      const max = Math.max(0, mergedGallery.length - 1);
+      const i = Math.max(0, Math.min(max, index));
+      const w = el.clientWidth;
+      if (w <= 0) return;
+      el.scrollTo({ left: i * w, behavior: "smooth" });
+      setActiveSlideIndex(i);
+    },
+    [mergedGallery.length],
+  );
+
+  useEffect(() => {
+    const el = mainGalleryScrollRef.current;
+    if (!el) return;
+    let t: ReturnType<typeof setTimeout>;
+    const onScroll = () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        const w = el.clientWidth;
+        if (w <= 0) return;
+        const i = Math.round(el.scrollLeft / w);
+        setActiveSlideIndex((prev) => (i !== prev ? i : prev));
+      }, 60);
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      clearTimeout(t);
+      el.removeEventListener("scroll", onScroll);
+    };
+  }, [mergedGallery.length]);
+
+  useEffect(() => {
+    thumbBtnRefs.current[activeSlideIndex]?.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  }, [activeSlideIndex]);
+
+  useEffect(() => {
+    setActiveSlideIndex(0);
+    const el = mainGalleryScrollRef.current;
+    if (el) el.scrollTo({ left: 0 });
+  }, [product._id]);
 
   const displaySku = selectedVariant?.sku ?? product.sku;
   const displayTitleSuffix =
@@ -144,24 +230,97 @@ export function ProductDetail({
 
       {/* Main section: Image + 3 info boxes */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-        {/* Left: Image gallery */}
+        {/* Left: carousel ảnh + thumbnail strip */}
         <div className="space-y-4">
-          <div className="aspect-square relative rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <Image
-              src={mainImage}
-              alt={
-                selectedVariant
-                  ? `${product.name} — ${selectedVariant.name}`
-                  : product.name
-              }
-              fill
-              priority
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              unoptimized={mainImage.startsWith("http")}
-            />
+          <div className="relative rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 overflow-hidden group">
+            <div
+              ref={mainGalleryScrollRef}
+              className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory touch-pan-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {displayGallery.map((img, i) => (
+                <div
+                  key={`slide-${i}-${img}`}
+                  className="min-w-full shrink-0 snap-center aspect-square relative"
+                >
+                  <Image
+                    src={img}
+                    alt={
+                      selectedVariant
+                        ? `${product.name} — ${selectedVariant.name} (${i + 1}/${displayGallery.length})`
+                        : `${product.name} (${i + 1}/${displayGallery.length})`
+                    }
+                    fill
+                    priority={i === 0}
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    unoptimized={img.startsWith("http")}
+                  />
+                </div>
+              ))}
+            </div>
+            {displayGallery.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Ảnh trước"
+                  onClick={() => scrollToSlide(activeSlideIndex - 1)}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 dark:bg-gray-900/90 shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-white transition-opacity disabled:opacity-30"
+                  disabled={activeSlideIndex <= 0}
+                >
+                  <svg
+                    className="w-5 h-5 text-gray-800 dark:text-gray-100"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  aria-label="Ảnh sau"
+                  onClick={() => scrollToSlide(activeSlideIndex + 1)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 dark:bg-gray-900/90 shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-white transition-opacity disabled:opacity-30"
+                  disabled={activeSlideIndex >= displayGallery.length - 1}
+                >
+                  <svg
+                    className="w-5 h-5 text-gray-800 dark:text-gray-100"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                  {displayGallery.map((_, i) => (
+                    <button
+                      key={`dot-${i}`}
+                      type="button"
+                      aria-label={`Slide ${i + 1}`}
+                      onClick={() => scrollToSlide(i)}
+                      className={`h-1.5 rounded-full transition-all ${
+                        i === activeSlideIndex
+                          ? "w-6 bg-amber-gold"
+                          : "w-1.5 bg-white/70 hover:bg-white"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
             <button
-              className="absolute bottom-3 left-3 w-10 h-10 bg-white/90 dark:bg-gray-800/90 rounded-lg flex items-center justify-center shadow-md hover:bg-white transition"
+              className="absolute top-3 left-3 z-10 w-10 h-10 bg-white/90 dark:bg-gray-800/90 rounded-lg flex items-center justify-center shadow-md hover:bg-white transition"
               aria-label="Phóng to"
             >
               <svg
@@ -179,29 +338,34 @@ export function ProductDetail({
               </svg>
             </button>
           </div>
-          <div className="flex flex-wrap gap-2 lg:gap-3">
-            {displayGallery.map((img, i) => (
-              <button
-                key={`${img}-${i}`}
-                type="button"
-                onClick={() => setMainImage(img)}
-                className={`w-20 h-20 shrink-0 relative rounded-lg overflow-hidden transition ${
-                  mainImage === img
-                    ? "border-amber-gold border-2 dark:border-white"
-                    : "border-gray-400 border dark:border-gray-600"
-                }`}
-              >
-                <Image
-                  src={img}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="80px"
-                  unoptimized={img.startsWith("http")}
-                />
-              </button>
-            ))}
-          </div>
+          {displayGallery.length > 0 && (
+            <div className="flex gap-2 lg:gap-3 overflow-x-auto scroll-smooth pb-1 snap-x snap-mandatory [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5">
+              {displayGallery.map((img, i) => (
+                <button
+                  key={`thumb-${i}-${img}`}
+                  type="button"
+                  ref={(el) => {
+                    thumbBtnRefs.current[i] = el;
+                  }}
+                  onClick={() => scrollToSlide(i)}
+                  className={`w-20 h-20 shrink-0 snap-start relative rounded-lg overflow-hidden transition ${
+                    activeSlideIndex === i
+                      ? "border-amber-gold border-2 dark:border-white ring-2 ring-amber-gold/30"
+                      : "border border-gray-400 dark:border-gray-600 hover:border-gray-500"
+                  }`}
+                >
+                  <Image
+                    src={img}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="80px"
+                    unoptimized={img.startsWith("http")}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right: 3 white boxes */}
@@ -253,12 +417,12 @@ export function ProductDetail({
                         title={v.name}
                         onClick={() => {
                           setSelectedVariantIndex(idx);
-                          const g = galleryForVariant(v, product.images);
-                          setMainImage(
-                            g[0] ||
-                              product.images?.[0] ||
-                              PLACEHOLDER_IMAGES.product,
+                          const slide = resolveSlideIndexForVariant(
+                            mergedGallery,
+                            v,
+                            productFallbackSingle,
                           );
+                          scrollToSlide(slide);
                         }}
                         className={`relative w-14 h-14 shrink-0 rounded-lg overflow-hidden cursor-pointer transition ${
                           isSel
