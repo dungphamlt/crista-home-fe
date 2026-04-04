@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { PLACEHOLDER_IMAGES } from '@/lib/constants';
-import { useCart } from '@/lib/cart-context';
-import type { Product } from '@/types/product';
+import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { PLACEHOLDER_IMAGES } from "@/lib/constants";
+import { useCart } from "@/lib/cart-context";
+import type { Product } from "@/types/product";
 
 interface ProductCardProps {
   product: Product;
@@ -14,7 +14,7 @@ interface ProductCardProps {
 }
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat('vi-VN').format(price) + ' VND';
+  return new Intl.NumberFormat("vi-VN").format(price) + " VND";
 }
 
 function StarRating({ rating = 5 }: { rating?: number }) {
@@ -24,7 +24,7 @@ function StarRating({ rating = 5 }: { rating?: number }) {
       {[1, 2, 3, 4, 5].map((i) => (
         <svg
           key={i}
-          className={`w-4 h-4 ${i <= stars ? 'text-yellow-400' : 'text-gray-200 dark:text-gray-600'}`}
+          className={`w-4 h-4 ${i <= stars ? "text-yellow-400" : "text-gray-200 dark:text-gray-600"}`}
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -38,7 +38,8 @@ function StarRating({ rating = 5 }: { rating?: number }) {
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const { addItem } = useCart();
   const [wishlist, setWishlist] = useState(false);
-  const img = product.images?.[0] || PLACEHOLDER_IMAGES.product;
+  const img =
+    product.coverImage || product.images?.[0] || PLACEHOLDER_IMAGES.product;
   const variantLabel = product.variants?.[0]?.name;
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -62,7 +63,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
     >
       <Link href={`/san-pham/${product.slug}`} className="block group">
@@ -75,7 +76,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               sizes="(max-width: 768px) 50vw, 25vw"
               className="object-cover group-hover:scale-105 transition-transform duration-300"
               loading="lazy"
-              unoptimized={img.startsWith('http')}
+              unoptimized={img.startsWith("http")}
             />
             {/* Tags */}
             <div className="absolute top-2 left-2 flex gap-1">
@@ -91,11 +92,11 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               )}
             </div>
             {/* Variant/Color tag - bottom left */}
-            {variantLabel && (
+            {/* {variantLabel && (
               <span className="absolute bottom-2 left-2 px-2 py-0.5 text-xs font-medium text-gray-800 bg-white/80 dark:bg-gray-900/80 dark:text-white rounded">
                 {variantLabel}
               </span>
-            )}
+            )} */}
             {/* Wishlist - top right */}
             <button
               onClick={handleWishlist}
@@ -103,8 +104,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               aria-label="Yêu thích"
             >
               <svg
-                className={`w-4 h-4 ${wishlist ? 'text-red-500 fill-red-500' : 'text-gray-600 dark:text-gray-400'}`}
-                fill={wishlist ? 'currentColor' : 'none'}
+                className={`w-4 h-4 ${wishlist ? "text-red-500 fill-red-500" : "text-gray-600 dark:text-gray-400"}`}
+                fill={wishlist ? "currentColor" : "none"}
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >

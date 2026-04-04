@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PLACEHOLDER_IMAGES } from "@/lib/constants";
-import type { Product } from "@/types/product";
+import type { Product, ProductVariant } from "@/types/product";
 import { NavLinks } from "./NavLinks";
 
 interface ProductDetailProps {
@@ -18,7 +18,8 @@ interface ProductDetailProps {
     price: number;
     compareAtPrice?: number;
     images?: string[];
-    variants?: { name: string; value?: string; image?: string }[];
+    coverImage?: string;
+    variants?: ProductVariant[];
     category?: { _id: string };
     averageRating?: number;
     totalReviews?: number;
@@ -32,6 +33,25 @@ const EMPTY_RELATED: Product[] = [];
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("vi-VN").format(price) + " VND";
+}
+
+/** Ảnh của một biến thể: ưu tiên mảng images, sau đó image đơn */
+function getVariantImageUrls(v: ProductVariant | undefined): string[] {
+  if (!v) return [];
+  if (v.images?.length) return v.images;
+  if (v.image) return [v.image];
+  return [];
+}
+
+/** Gallery hiển thị khi đã chọn biến thể — fallback ảnh sản phẩm */
+function galleryForVariant(
+  v: ProductVariant | undefined,
+  fallback: string[] | undefined,
+): string[] {
+  const fromVariant = getVariantImageUrls(v);
+  if (fromVariant.length) return fromVariant;
+  if (fallback?.length) return fallback;
+  return [];
 }
 
 function StarRating({
@@ -78,22 +98,33 @@ export function ProductDetail({
   product,
   relatedProducts = EMPTY_RELATED,
 }: ProductDetailProps) {
-  const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0]);
-  const [mainImage, setMainImage] = useState(
-    product.images?.[0] ||
-      product.variants?.[0]?.image ||
-      PLACEHOLDER_IMAGES.product,
-  );
+  const variants = product.variants || [];
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  const selectedVariant =
+    variants.length > 0 ? variants[selectedVariantIndex] : undefined;
+
+  const firstVariant = variants[0];
+  const initialGallery = galleryForVariant(firstVariant, product.images);
+  const initialMain =
+    initialGallery[0] || product.images?.[0] || PLACEHOLDER_IMAGES.product;
+
+  const [mainImage, setMainImage] = useState(initialMain);
   const [activeTab, setActiveTab] = useState<"info" | "reviews" | "comments">(
     "info",
   );
   const [comment, setComment] = useState("");
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  const images = product.images?.length
-    ? product.images
-    : [PLACEHOLDER_IMAGES.product];
-  const variants = product.variants || [];
+  const displayGallery =
+    variants.length > 0
+      ? galleryForVariant(selectedVariant, product.images)
+      : product.images?.length
+        ? product.images
+        : [PLACEHOLDER_IMAGES.product];
+
+  const displaySku = selectedVariant?.sku ?? product.sku;
+  const displayTitleSuffix =
+    variants.length > 0 && selectedVariant ? ` (${selectedVariant.name})` : "";
 
   const scrollCarousel = (dir: number) => {
     if (carouselRef.current) {
@@ -118,7 +149,11 @@ export function ProductDetail({
           <div className="aspect-square relative rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
             <Image
               src={mainImage}
-              alt={product.name}
+              alt={
+                selectedVariant
+                  ? `${product.name} — ${selectedVariant.name}`
+                  : product.name
+              }
               fill
               priority
               className="object-cover"
@@ -145,9 +180,10 @@ export function ProductDetail({
             </button>
           </div>
           <div className="flex flex-wrap gap-2 lg:gap-3">
-            {images.map((img, i) => (
+            {displayGallery.map((img, i) => (
               <button
                 key={`${img}-${i}`}
+                type="button"
                 onClick={() => setMainImage(img)}
                 className={`w-20 h-20 shrink-0 relative rounded-lg overflow-hidden transition ${
                   mainImage === img
@@ -174,13 +210,18 @@ export function ProductDetail({
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <h1 className="text-xl font-bold text-gray-900 dark:text-white uppercase leading-tight">
               {product.name}
+              {displayTitleSuffix && (
+                <span className="font-semibold normal-case text-gray-700 dark:text-gray-300">
+                  {displayTitleSuffix}
+                </span>
+              )}
             </h1>
             <div className="mt-2">
               <StarRating rating={product.averageRating} size="sm" />
             </div>
-            {product.sku && (
+            {displaySku && (
               <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                Mã sản phẩm: {product.sku}
+                Mã sản phẩm: {displaySku}
               </p>
             )}
             <p className="mt-3 text-2xl font-bold text-red-600 dark:text-red-400">
@@ -198,36 +239,61 @@ export function ProductDetail({
                   </span>
                 </div>
                 <div className="flex gap-2 flex-wrap">
-                  {variants.map((v) => (
-                    <button
-                      key={v.name}
-                      onClick={() => {
-                        setSelectedVariant(v);
-                        if (v.image) setMainImage(v.image);
-                      }}
-                      className={`w-10 h-10 rounded-full overflow-hidden border-2 transition ${
-                        selectedVariant?.name === v.name
-                          ? "border-gray-900 dark:border-white"
-                          : "border-gray-200 dark:border-gray-600"
-                      }`}
-                    >
-                      {v.image ? (
+                  {variants.map((v, idx) => {
+                    const thumb =
+                      getVariantImageUrls(v)[0] ||
+                      product.images?.[0] ||
+                      PLACEHOLDER_IMAGES.product;
+                    const isSel = selectedVariantIndex === idx;
+                    const uniqueKey = `${v.sku ?? "v"}-${idx}-${v.name}`;
+                    return (
+                      <button
+                        key={uniqueKey}
+                        type="button"
+                        title={v.name}
+                        onClick={() => {
+                          setSelectedVariantIndex(idx);
+                          const g = galleryForVariant(v, product.images);
+                          setMainImage(
+                            g[0] ||
+                              product.images?.[0] ||
+                              PLACEHOLDER_IMAGES.product,
+                          );
+                        }}
+                        className={`relative w-14 h-14 shrink-0 rounded-lg overflow-hidden cursor-pointer transition ${
+                          isSel
+                            ? "border-amber-gold border-2"
+                            : "border-gray-200 border hover:border-2 dark:border-gray-600 hover:border-gray-500"
+                        }`}
+                      >
                         <Image
-                          src={v.image}
+                          src={thumb}
                           alt={v.name}
-                          width={40}
-                          height={40}
-                          className="object-cover"
-                          unoptimized={v.image?.startsWith("http")}
+                          width={56}
+                          height={56}
+                          className="object-cover w-full h-full"
+                          unoptimized={thumb.startsWith("http")}
                         />
-                      ) : (
-                        <div
-                          className="w-full h-full bg-gray-200 dark:bg-gray-600"
-                          title={v.name}
-                        />
-                      )}
-                    </button>
-                  ))}
+                        {isSel && (
+                          <span className="absolute bottom-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-gold text-white shadow">
+                            <svg
+                              className="h-2.5 w-2.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={3}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
