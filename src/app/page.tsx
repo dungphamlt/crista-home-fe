@@ -252,7 +252,7 @@ export default async function HomePage() {
       )}
 
       {/* Sản phẩm nổi bật */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900/50">
+      <section className="pb-10 md:pb-16 bg-white dark:bg-gray-900">
         <div className="container">
           <ScrollReveal>
             <div className="flex justify-between items-center mb-10">
@@ -277,7 +277,7 @@ export default async function HomePage() {
 
       {/* TEWA Categories */}
       {categoriesTewa.length > 0 && (
-        <section className="py-16 bg-white dark:bg-gray-900">
+        <section className="pb-10 md:pb-16 bg-white dark:bg-gray-900">
           <div className="container">
             <ScrollReveal>
               <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 uppercase tracking-tight text-gray-900 dark:text-white">
@@ -305,8 +305,7 @@ export default async function HomePage() {
                       {cat.name}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      {cat.order ? `#${cat.order}` : (cat.productCount ?? 0)}{" "}
-                      Sản phẩm
+                      #{cat.productCount ?? 0} Sản phẩm
                     </p>
                   </Link>
                 </ScrollReveal>
@@ -317,7 +316,7 @@ export default async function HomePage() {
       )}
 
       {/* Sản phẩm mới */}
-      <section className="pt-16 pb-10 md:pb-28 bg-white dark:bg-gray-900">
+      <section className="pb-10 md:pb-14 bg-white dark:bg-gray-900">
         <div className="container">
           <ScrollReveal>
             <div className="flex justify-between items-center mb-10">

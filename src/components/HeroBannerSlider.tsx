@@ -59,7 +59,7 @@ export function HeroBannerSlider({ banners }: { banners: HeroBannerItem[] }) {
   const current = list[index];
 
   return (
-    <section className="relative h-[400px] md:h-[500px] overflow-hidden">
+    <section className="relative h-[400px] md:h-[500px] overflow-hidden z-20">
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={index}

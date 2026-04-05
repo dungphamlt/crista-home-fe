@@ -93,7 +93,7 @@ export function LatestNewsCarousel({ posts }: { posts: LatestNewsItem[] }) {
   if (posts.length === 0) return null;
 
   return (
-    <section className="py-14 md:py-16 bg-gray-50 dark:bg-gray-900/40 border-t border-gray-200/80 dark:border-gray-800">
+    <section className="pb-8 bg-white dark:bg-gray-900">
       <div className="container">
         <h2 className="text-center text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-10 md:mb-12 tracking-tight">
           Tin tức mới nhất
@@ -105,7 +105,7 @@ export function LatestNewsCarousel({ posts }: { posts: LatestNewsItem[] }) {
             aria-label="Tin trước"
             disabled={!canPrev}
             onClick={() => scrollByDir(-1)}
-            className="absolute left-0 top-1/2 z-10 -translate-y-1/2 -translate-x-1 md:-translate-x-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-800 shadow-sm transition hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-30 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
+            className="absolute -left-8 top-1/2 z-10 -translate-y-1/2 -translate-x-1 md:-translate-x-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-800 shadow-sm transition hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-30 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
           >
             <ChevronLeft />
           </button>
@@ -114,14 +114,14 @@ export function LatestNewsCarousel({ posts }: { posts: LatestNewsItem[] }) {
             aria-label="Tin sau"
             disabled={!canNext}
             onClick={() => scrollByDir(1)}
-            className="absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-1 md:translate-x-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-800 shadow-sm transition hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-30 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
+            className="absolute -right-8 top-1/2 z-10 -translate-y-1/2 translate-x-1 md:translate-x-2 flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-800 shadow-sm transition hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-30 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
           >
             <ChevronRight />
           </button>
 
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth pb-2 pl-12 pr-12 md:pl-14 md:pr-14 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory"
+            className="flex gap-6 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory"
           >
             {posts.map((post) => (
               <article
@@ -129,7 +129,10 @@ export function LatestNewsCarousel({ posts }: { posts: LatestNewsItem[] }) {
                 data-news-card
                 className="news-card flex-[0_0_min(100%,320px)] sm:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(25%-18px)] snap-start shrink-0 min-w-0 rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm transition hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
               >
-                <Link href={`/tin-tuc/${post.slug}`} className="group flex h-full flex-col">
+                <Link
+                  href={`/tin-tuc/${post.slug}`}
+                  className="group flex h-full flex-col"
+                >
                   <div className="relative aspect-4/3 bg-gray-100 dark:bg-gray-700">
                     <Image
                       src={post.thumbnail || PLACEHOLDER_IMAGES.blog}
@@ -147,8 +150,7 @@ export function LatestNewsCarousel({ posts }: { posts: LatestNewsItem[] }) {
                       dateTime={post.createdAt || post.updatedAt}
                       className="mt-2 text-sm text-gray-500 dark:text-gray-400"
                     >
-                      {formatBlogDate(post.createdAt || post.updatedAt) ||
-                        "—"}
+                      {formatBlogDate(post.createdAt || post.updatedAt) || "—"}
                     </time>
                     {post.excerpt && (
                       <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 line-clamp-3 flex-1">
@@ -162,10 +164,10 @@ export function LatestNewsCarousel({ posts }: { posts: LatestNewsItem[] }) {
           </div>
         </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-6 text-center">
           <Link
             href="/tin-tuc"
-            className="inline-flex items-center justify-center px-6 py-2.5 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+            className="inline-flex items-center justify-center text-sm px-6 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition"
           >
             Xem tất cả tin tức
           </Link>

@@ -65,7 +65,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+      <body className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
         <ThemeProvider>
           <CartProvider>
             <AuthProvider>

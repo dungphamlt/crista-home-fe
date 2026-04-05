@@ -1,37 +1,46 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
+import { useScrollRevealOnce } from "@/hooks/useScrollRevealOnce";
 
 interface ScrollRevealProps {
   children: React.ReactNode;
   className?: string;
   delay?: number;
-  direction?: 'up' | 'down' | 'left' | 'right';
+  direction?: "up" | "down" | "left" | "right";
 }
+
+const directionHidden: Record<
+  NonNullable<ScrollRevealProps["direction"]>,
+  string
+> = {
+  up: "opacity-0 translate-y-10",
+  down: "opacity-0 -translate-y-10",
+  left: "opacity-0 translate-x-10",
+  right: "opacity-0 -translate-x-10",
+};
+
+const directionVisible =
+  "opacity-100 translate-x-0 translate-y-0";
 
 export function ScrollReveal({
   children,
-  className = '',
+  className = "",
   delay = 0,
-  direction = 'up',
+  direction = "up",
 }: ScrollRevealProps) {
-  const variants = {
-    up: { y: 40, opacity: 0 },
-    down: { y: -40, opacity: 0 },
-    left: { x: 40, opacity: 0 },
-    right: { x: -40, opacity: 0 },
-  };
-  const to = { x: 0, y: 0, opacity: 1 };
+  const { ref, visible } = useScrollRevealOnce();
 
   return (
-    <motion.div
-      initial={variants[direction]}
-      whileInView={to}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.5, delay }}
-      className={className}
+    <div
+      ref={ref}
+      className={`transition-all duration-500 ease-out will-change-transform ${
+        visible ? directionVisible : directionHidden[direction]
+      } ${className}`}
+      style={{
+        transitionDelay: visible ? `${delay}s` : undefined,
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

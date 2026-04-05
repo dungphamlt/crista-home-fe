@@ -29,11 +29,11 @@ export function Footer() {
     <>
       <SocialSidebar />
 
-      <footer className="pt-10 relative bg-gray-100 dark:bg-gray-800/50">
+      <footer className="pt-10 mt-10 md:mt-20 relative bg-gray-100 dark:bg-gray-800/50">
         {/* Newsletter bar */}
         <div className="bg-transparent absolute top-0 left-0 w-full translate-y-[-50%]">
-          <div className="container bg-amber-gold rounded-lg py-6 md:py-8 ">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="container">
+            <div className="bg-amber-gold rounded-2xl px-6 py-6 md:py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div>
                 <h3 className="font-bold text-white uppercase tracking-wide text-lg md:text-xl">
                   Đăng ký nhận tin

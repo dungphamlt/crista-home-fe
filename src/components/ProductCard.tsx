@@ -3,8 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { PLACEHOLDER_IMAGES } from "@/lib/constants";
+import { useScrollRevealOnce } from "@/hooks/useScrollRevealOnce";
 import { useCart } from "@/lib/cart-context";
 import type { Product } from "@/types/product";
 
@@ -38,6 +38,8 @@ function StarRating({ rating = 5 }: { rating?: number }) {
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const { addItem } = useCart();
   const [wishlist, setWishlist] = useState(false);
+  const { ref: revealRef, visible: revealVisible } =
+    useScrollRevealOnce("-50px", 0.08);
   const img =
     product.coverImage || product.images?.[0] || PLACEHOLDER_IMAGES.product;
   const variantLabel = product.variants?.[0]?.name;
@@ -60,11 +62,16 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
+    <div
+      ref={revealRef}
+      className={`transition-all duration-400 ease-out ${
+        revealVisible
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 translate-y-5"
+      }`}
+      style={{
+        transitionDelay: revealVisible ? `${index * 0.05}s` : undefined,
+      }}
     >
       <Link href={`/san-pham/${product.slug}`} className="block group">
         <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
@@ -135,6 +142,6 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }
