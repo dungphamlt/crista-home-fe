@@ -9,31 +9,31 @@ import phoneImg from "@/assets/images/phone.png";
 
 const SOCIAL_LINKS = [
   {
-    href: "https://www.facebook.com/CristaaHome",
+    href: "https://www.facebook.com/tongkhoCristaHome",
     label: "Facebook",
     image: facebookImg,
     accent: "#1877F2",
   },
   {
-    href: "https://zalo.me/0962453366",
+    href: "https://zalo.me/0394510312",
     label: "Zalo",
     image: zaloImg,
     accent: "#0068FF",
   },
+  // {
+  //   href: "https://shopee.vn",
+  //   label: "Shopee",
+  //   image: shopeeImg,
+  //   accent: "#EE4D2D",
+  // },
+  // {
+  //   href: "https://www.tiktok.com",
+  //   label: "TikTok",
+  //   image: tiktokImg,
+  //   accent: "#000000",
+  // },
   {
-    href: "https://shopee.vn",
-    label: "Shopee",
-    image: shopeeImg,
-    accent: "#EE4D2D",
-  },
-  {
-    href: "https://www.tiktok.com",
-    label: "TikTok",
-    image: tiktokImg,
-    accent: "#000000",
-  },
-  {
-    href: "tel:0962453366",
+    href: "tel:0394510312",
     label: "Hotline",
     image: phoneImg,
     accent: "#25D366",
@@ -42,7 +42,7 @@ const SOCIAL_LINKS = [
 
 export function SocialSidebar() {
   return (
-    <div className="fixed left-6 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col gap-3 pl-2">
+    <div className="fixed left-6 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col gap-6 pl-2">
       {SOCIAL_LINKS.map(({ href, label, image, accent }, index) => (
         <a
           key={label}

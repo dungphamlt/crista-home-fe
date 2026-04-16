@@ -38,8 +38,10 @@ function StarRating({ rating = 5 }: { rating?: number }) {
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const { addItem } = useCart();
   const [wishlist, setWishlist] = useState(false);
-  const { ref: revealRef, visible: revealVisible } =
-    useScrollRevealOnce("-50px", 0.08);
+  const { ref: revealRef, visible: revealVisible } = useScrollRevealOnce(
+    "-50px",
+    0.08,
+  );
   const img =
     product.coverImage || product.images?.[0] || PLACEHOLDER_IMAGES.product;
   const variantLabel = product.variants?.[0]?.name;
@@ -65,9 +67,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     <div
       ref={revealRef}
       className={`transition-all duration-400 ease-out ${
-        revealVisible
-          ? "opacity-100 translate-y-0"
-          : "opacity-0 translate-y-5"
+        revealVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
       }`}
       style={{
         transitionDelay: revealVisible ? `${index * 0.05}s` : undefined,
@@ -133,12 +133,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               {formatPrice(product.price)}
             </p>
             <StarRating rating={product.averageRating} />
-            <button
-              onClick={handleAddToCart}
-              className="mt-3 w-full py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-lg transition"
-            >
-              Thêm vào giỏ
-            </button>
+            <div className="mt-3 w-full py-2 bg-gray-200 dark:bg-gray-700 text-center hover:bg-amber-gold dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-lg transition">
+              Xem chi tiết
+            </div>
           </div>
         </div>
       </Link>

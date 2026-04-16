@@ -83,7 +83,7 @@ export default function ContactPage() {
                       href="mailto:ptcvietnam181@gmail.com"
                       className="mt-1 text-sm text-slate-600 dark:text-gray-400 hover:text-amber-gold dark:hover:text-amber-400 transition break-all"
                     >
-                      ptcvietnam181@gmail.com
+                      cristahomedecor@gmail.com
                     </a>
                   </div>
                 </div>
@@ -100,7 +100,7 @@ export default function ContactPage() {
                       href="tel:0962453366"
                       className="mt-1 text-sm text-slate-600 dark:text-gray-400 hover:text-amber-gold dark:hover:text-amber-400 transition"
                     >
-                      0962 45 3366
+                      0394510312
                     </a>
                   </div>
                 </div>
