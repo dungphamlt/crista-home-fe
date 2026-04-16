@@ -31,12 +31,12 @@ export function NewsletterForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         disabled={status === "loading"}
-        className="px-4 py-2.5 rounded-l-full bg-white text-gray-900 placeholder-gray-500 min-w-0 flex-1 md:w-56 focus:outline-none"
+        className="px-4 py-2.5 text-sm md:text-base rounded-l-full bg-white text-gray-900 placeholder-gray-500 min-w-0 flex-1 md:w-56 focus:outline-none"
       />
       <button
         type="submit"
         disabled={status === "loading"}
-        className="px-5 py-2.5 rounded-r-full border-2 cursor-pointer border-white text-white font-medium hover:bg-white/10 transition-colors disabled:opacity-70"
+        className="px-5 py-2.5 text-sm md:text-base rounded-r-full border-2 cursor-pointer border-white text-white font-medium hover:bg-white/10 transition-colors disabled:opacity-70"
       >
         {status === "loading" ? "Đang gửi..." : "Gửi tin nhắn"}
       </button>

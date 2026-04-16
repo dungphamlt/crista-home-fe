@@ -26,9 +26,9 @@ export function Footer() {
     <>
       <SocialSidebar />
 
-      <footer className="pt-10 mt-10 md:mt-20 relative bg-gray-100 dark:bg-gray-800/50">
+      <footer className="pt-0 mt-10 md:pt-16 md:mt-20 relative bg-gray-100 dark:bg-gray-800/50">
         {/* Newsletter bar */}
-        <div className="bg-transparent absolute top-0 left-0 w-full translate-y-[-50%]">
+        <div className="bg-transparent static md:absolute top-0 left-0 w-full translate-y-[-20%] md:translate-y-[-50%]">
           <div className="container">
             <div className="bg-amber-gold rounded-2xl px-6 py-6 md:py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div>
@@ -46,7 +46,7 @@ export function Footer() {
         </div>
 
         {/* Main info columns */}
-        <div className="bg-transparent py-12">
+        <div className="bg-transparent pt-0 pb-8 md:pb-12 md:pt-12">
           <div className="container">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1fr_minmax(340px,1.2fr)] gap-6">
               {/* Column 1: Thông tin website */}

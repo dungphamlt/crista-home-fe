@@ -52,11 +52,13 @@ export function Header() {
       <div className="bg-amber-gold dark:bg-amber-700 text-white/95 text-sm">
         <div className="container py-2">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
-            <span>Chào mừng bạn đến với website chúng tôi</span>
+            <span className="hidden md:block">
+              Chào mừng bạn đến với website chúng tôi
+            </span>
             <div className="flex items-center gap-6">
               <a
-                href="mailto:ptcvietnam181@gmail.com"
-                className="flex items-center gap-1.5 hover:underline"
+                href="mailto:cristahomedecor@gmail.com"
+                className="items-center gap-1.5 hover:underline hidden md:flex"
               >
                 <svg
                   className="w-4 h-4"
@@ -66,11 +68,18 @@ export function Header() {
                   <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                   <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                 </svg>
-                Email: ptcvietnam181@gmail.com
+                Email: cristahomedecor@gmail.com
               </a>
               <a
-                href="tel:0962453366"
-                className="flex items-center gap-1.5 hover:underline"
+                href="mailto:cristahomedecor@gmail.com"
+                className="flex items-center gap-1.5 hover:underline md:hidden"
+              >
+                cristahomedecor@gmail.com
+              </a>
+
+              <a
+                href="tel:0394510312"
+                className="items-center gap-1.5 hover:underline hidden md:flex"
               >
                 <svg
                   className="w-4 h-4"
@@ -79,7 +88,13 @@ export function Header() {
                 >
                   <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                 </svg>
-                Hotline: 0962 45 3366
+                Hotline: 0394510312
+              </a>
+              <a
+                href="tel:0394510312"
+                className="items-center gap-1.5 hover:underline block md:hidden"
+              >
+                0394510312
               </a>
             </div>
           </div>
@@ -334,7 +349,7 @@ export function Header() {
             {/* Red CTA - Hotline */}
             <a
               href="tel:0962453366"
-              className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold ml-auto shrink-0 animate-bounce"
+              className="flex hidden md:flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold ml-auto shrink-0 animate-bounce"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
