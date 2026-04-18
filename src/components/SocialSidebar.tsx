@@ -42,7 +42,7 @@ const SOCIAL_LINKS = [
 
 export function SocialSidebar() {
   return (
-    <div className="fixed left-6 top-1/2 -translate-y-1/2 z-10 hidden lg:flex flex-col gap-6 pl-2">
+    <div className="fixed left-4 md:left-6 top-1/2 -translate-y-1/2 z-10 flex flex-col gap-6 pl-2">
       {SOCIAL_LINKS.map(({ href, label, image, accent }, index) => (
         <a
           key={label}
@@ -51,7 +51,7 @@ export function SocialSidebar() {
           rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
           aria-label={label}
           style={{ animationDelay: `${index * 80 + 150}ms` }}
-          className="group relative bg-white rounded-full animate-social-sidebar-in transition-transform duration-200 ease-out hover:scale-[1.12] hover:translate-x-1.5 active:scale-[0.94]"
+          className="group relative bg-white rounded-full animate-pulse md:animate-social-sidebar-in transition-transform duration-200 ease-out hover:scale-[1.12] hover:translate-x-1.5 active:scale-[0.94]"
         >
           <span
             className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -59,13 +59,13 @@ export function SocialSidebar() {
               boxShadow: `0 0 20px 2px ${accent}55`,
             }}
           />
-          <span className="relative flex h-10 w-10 rounded-full items-center justify-center transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-110">
+          <span className="relative flex h-8 w-8 md:h-10 md:w-10 rounded-full items-center justify-center transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-110">
             <Image
               src={image}
               alt=""
               width={40}
               height={40}
-              className="h-10 w-10 object-cover rounded-full"
+              className="w-full h-full object-cover rounded-full"
               aria-hidden
             />
           </span>
