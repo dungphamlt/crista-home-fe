@@ -10,9 +10,9 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PLACEHOLDER_IMAGES, SITE_URL } from "@/lib/constants";
 
-const siteName = "Crista Home";
+const siteName = "Tổng Kho Crista Home";
 const title =
-  "Crista Home - Đồ gia dụng gia đình hiện đại, tinh giản và bền bỉ";
+  "Tổng Kho Crista Home - Đồ gia dụng gia đình hiện đại, tinh giản và bền bỉ";
 const description =
   "Đồ gia dụng gia đình hiện đại, tinh giản và bền bỉ. Thủy tinh, pha lê, gốm sứ cao cấp CRISTA & TEWA. Giao nhanh, đổi trả linh hoạt.";
 
