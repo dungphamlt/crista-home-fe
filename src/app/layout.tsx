@@ -25,9 +25,6 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
     icon: "/favicon.ico",
   },
-  alternates: {
-    canonical: SITE_URL,
-  },
   openGraph: {
     locale: "vi_VN",
     type: "website",

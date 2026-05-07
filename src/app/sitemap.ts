@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { api, endpoints } from '@/lib/api';
 import { SITE_URL } from '@/lib/constants';
+import { CATEGORY_PARENT_CRISTA, CATEGORY_PARENT_TEWA } from '@/lib/category-brands';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = [
@@ -11,8 +12,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/lien-he`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
     { url: `${SITE_URL}/lien-he-lam-nha-phan-phoi`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.65 },
     { url: `${SITE_URL}/yeu-cau-xoa-du-lieu`, lastModified: new Date(), changeFrequency: 'yearly' as const, priority: 0.4 },
-    { url: `${SITE_URL}/gio-hang`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
-    { url: `${SITE_URL}/don-hang`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
   ];
 
   let productUrls: MetadataRoute.Sitemap = [];
@@ -20,13 +19,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let blogUrls: MetadataRoute.Sitemap = [];
 
   try {
-    const [categoriesRes, productsRes, blogsRes] = await Promise.all([
+    const [categoriesRes, cristaRes, tewaRes, productsRes, blogsRes] = await Promise.all([
       api.get(endpoints.categories()),
+      api.get(endpoints.categories({ parentId: CATEGORY_PARENT_CRISTA })),
+      api.get(endpoints.categories({ parentId: CATEGORY_PARENT_TEWA })),
       api.get(endpoints.products({ limit: 1000 })),
       api.get(endpoints.blogs(1)),
     ]);
 
-    const categories = (categoriesRes.data || []) as { slug: string }[];
+    const categories = [
+      ...(categoriesRes.data || []),
+      ...(cristaRes.data || []),
+      ...(tewaRes.data || []),
+    ] as { slug: string }[];
+
     const products = (productsRes.data as { data?: unknown[] })?.data || [];
     const blogs = (blogsRes.data as { data?: { slug: string }[] })?.data || [];
 
