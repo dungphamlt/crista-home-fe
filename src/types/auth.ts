@@ -1,9 +1,11 @@
 /** Khớp phản hồi từ Nest `AuthController` (login / OAuth callback) */
 export type AuthUser = {
   id: string;
+  username?: string;
   email: string;
   name?: string;
   avatar?: string;
+  role?: string;
 };
 
 export type AuthLoginResponse = {

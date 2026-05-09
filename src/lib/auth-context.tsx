@@ -26,7 +26,7 @@ type AuthContextValue = {
   authModal: AuthModalMode | null;
   openAuthModal: (mode: AuthModalMode) => void;
   closeAuthModal: () => void;
-  login: (email: string, password: string) => Promise<void>;
+  login: (identifier: string, password: string) => Promise<void>;
   register: (payload: {
     email: string;
     password: string;
@@ -97,9 +97,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const login = useCallback(
-    async (email: string, password: string) => {
+    async (identifier: string, password: string) => {
       const { data } = await api.post(endpoints.authLogin(), {
-        email,
+        // Backend dùng DTO: { identifier: email|username, password }
+        identifier,
         password,
       });
       const body = data as { access_token: string; user: AuthUser };

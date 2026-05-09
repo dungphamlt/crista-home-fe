@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PLACEHOLDER_IMAGES } from "@/lib/constants";
+import { useAuth } from "@/lib/auth-context";
 import type { Product, ProductVariant } from "@/types/product";
 import facebookImg from "@/assets/images/facebook.png";
 import zaloImg from "@/assets/images/zalo.png";
@@ -19,6 +20,8 @@ interface ProductDetailProps {
     description?: string;
     shortDescription?: string;
     price: number;
+    wholesalePrice?: number;
+    bulkWholesalePrice?: number;
     compareAtPrice?: number;
     images?: string[];
     coverImage?: string;
@@ -137,6 +140,7 @@ export function ProductDetail({
   product,
   relatedProducts = EMPTY_RELATED,
 }: ProductDetailProps) {
+  const { user } = useAuth();
   const variants = product.variants || [];
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const selectedVariant =
@@ -393,6 +397,26 @@ export function ProductDetail({
             <p className="mt-3 text-2xl font-bold text-red-600 dark:text-red-400">
               {formatPrice(product.price)}
             </p>
+            {user?.role === "partner" && (
+              <div className="mt-3 space-y-1 text-sm font-semibold">
+                {typeof product.wholesalePrice === "number" && (
+                  <div className="text-gray-800 dark:text-gray-200">
+                    Giá sỉ:{" "}
+                    <span className="text-emerald-700 dark:text-emerald-400">
+                      {formatPrice(product.wholesalePrice)}
+                    </span>
+                  </div>
+                )}
+                {typeof product.bulkWholesalePrice === "number" && (
+                  <div className="text-gray-800 dark:text-gray-200">
+                    Giá sỉ số lượng lớn:{" "}
+                    <span className="text-emerald-700 dark:text-emerald-400">
+                      {formatPrice(product.bulkWholesalePrice)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {variants.length > 0 && (
               <div className="mt-4">

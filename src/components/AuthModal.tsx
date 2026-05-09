@@ -60,7 +60,7 @@ export function AuthModal() {
     isAuthenticated,
   } = useAuth();
 
-  const [loginEmail, setLoginEmail] = useState("");
+  const [loginIdentifier, setLoginIdentifier] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -77,7 +77,7 @@ export function AuthModal() {
 
   // ✅ Fix: reset toàn bộ fields khi đóng/mở modal
   const resetForms = useCallback(() => {
-    setLoginEmail("");
+    setLoginIdentifier("");
     setLoginPassword("");
     setRegName("");
     setRegEmail("");
@@ -127,10 +127,12 @@ export function AuthModal() {
     setLoginBanner(null);
     setLoginLoading(true);
     try {
-      await login(loginEmail.trim(), loginPassword);
+      await login(loginIdentifier.trim(), loginPassword);
       closeAuthModal();
     } catch (err) {
-      setLoginError(formatAxiosMessage(err, "Email hoặc mật khẩu không đúng."));
+      setLoginError(
+        formatAxiosMessage(err, "Tên đăng nhập hoặc mật khẩu không đúng."),
+      );
     } finally {
       setLoginLoading(false);
     }
@@ -158,7 +160,7 @@ export function AuthModal() {
         closeAuthModal();
         return;
       }
-      setLoginEmail(regEmail.trim());
+      setLoginIdentifier(regEmail.trim());
       setLoginBanner("Đăng ký thành công. Vui lòng đăng nhập.");
       openAuthModal("login");
     } catch (err) {
@@ -172,7 +174,7 @@ export function AuthModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      className="fixed inset-0 z-100 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby={`${baseId}-title`}
@@ -287,18 +289,18 @@ export function AuthModal() {
                 )}
                 <div>
                   <label
-                    htmlFor={`${baseId}-lemail`}
+                    htmlFor={`${baseId}-lident`}
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >
-                    Email
+                    Email hoặc tên đăng nhập
                   </label>
                   <input
-                    id={`${baseId}-lemail`}
-                    type="email"
-                    autoComplete="email"
+                    id={`${baseId}-lident`}
+                    type="text"
+                    autoComplete="username"
                     required
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
+                    value={loginIdentifier}
+                    onChange={(e) => setLoginIdentifier(e.target.value)}
                     className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-4 py-2.5 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 outline-none"
                   />
                 </div>
@@ -322,7 +324,7 @@ export function AuthModal() {
                 <button
                   type="submit"
                   disabled={loginLoading}
-                  className="w-full rounded-xl bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-semibold py-3 disabled:opacity-60 transition"
+                  className="w-full rounded-xl bg-linear-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-semibold py-3 disabled:opacity-60 transition"
                 >
                   {loginLoading ? "Đang xử lý…" : "Đăng nhập"}
                 </button>
@@ -430,7 +432,7 @@ export function AuthModal() {
                 <button
                   type="submit"
                   disabled={regLoading}
-                  className="w-full rounded-xl bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-semibold py-3 disabled:opacity-60 transition"
+                  className="w-full rounded-xl bg-linear-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-semibold py-3 disabled:opacity-60 transition"
                 >
                   {regLoading ? "Đang xử lý…" : "Tạo tài khoản"}
                 </button>

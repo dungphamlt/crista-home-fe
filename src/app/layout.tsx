@@ -6,9 +6,9 @@ import { CartProvider } from "@/lib/cart-context";
 import { AuthProvider } from "@/lib/auth-context";
 import { AuthModal } from "@/components/AuthModal";
 import { AuthSearchParamsSync } from "@/components/AuthSearchParamsSync";
-import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { PLACEHOLDER_IMAGES, SITE_URL } from "@/lib/constants";
+import { HeaderClient } from "@/components/HeaderClient";
+import { SITE_URL } from "@/lib/constants";
 
 const siteName = "Tổng Kho Crista Home";
 const title =
@@ -21,10 +21,6 @@ export const metadata: Metadata = {
   title,
   description,
   robots: { index: true, follow: true },
-  icons: {
-    shortcut: "/favicon.ico",
-    icon: "/favicon.ico",
-  },
   openGraph: {
     locale: "vi_VN",
     type: "website",
@@ -70,13 +66,7 @@ export default function RootLayout({
                 <AuthSearchParamsSync />
               </Suspense>
               <AuthModal />
-              <Suspense
-                fallback={
-                  <div className="h-14 bg-white dark:bg-gray-900 border-b border-gray-100" />
-                }
-              >
-                <Header />
-              </Suspense>
+              <HeaderClient />
               <main className="flex-1">{children}</main>
               <Footer />
             </AuthProvider>

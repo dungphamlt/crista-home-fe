@@ -1,4 +1,5 @@
 import { api, endpoints } from '@/lib/api';
+import { getAuthHeaders } from '@/lib/api-server';
 import { ProductDetail } from '@/components/ProductDetail';
 import { notFound } from 'next/navigation';
 import type { Product } from '@/types/product';
@@ -6,7 +7,10 @@ import type { Product } from '@/types/product';
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   try {
-    const res = await api.get(endpoints.productBySlug(slug));
+    const authHeaders = await getAuthHeaders();
+    const res = await api.get(endpoints.productBySlug(slug), {
+      headers: authHeaders,
+    });
     const product = res.data;
     return {
       title: `${product?.name || 'Sản phẩm'} - Crista Home`,
@@ -21,7 +25,10 @@ async function getRelatedProducts(productId: string, categoryId?: string): Promi
   try {
     const params: Record<string, string | number> = { limit: 8 };
     if (categoryId) params.category = categoryId;
-    const res = await api.get(endpoints.products(params));
+    const authHeaders = await getAuthHeaders();
+    const res = await api.get(endpoints.products(params), {
+      headers: authHeaders,
+    });
     const data = (res.data?.data || res.data) as Product[];
     return Array.isArray(data) ? data.filter((p) => p._id !== productId) : [];
   } catch {
@@ -32,7 +39,10 @@ async function getRelatedProducts(productId: string, categoryId?: string): Promi
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   try {
-    const res = await api.get(endpoints.productBySlug(slug));
+    const authHeaders = await getAuthHeaders();
+    const res = await api.get(endpoints.productBySlug(slug), {
+      headers: authHeaders,
+    });
     const product = res.data;
     if (!product) notFound();
 

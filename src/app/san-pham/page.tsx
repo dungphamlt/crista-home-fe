@@ -1,4 +1,5 @@
 import { api, endpoints } from '@/lib/api';
+import { getAuthHeaders } from '@/lib/api-server';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductFilters } from '@/components/ProductFilters';
 
@@ -38,7 +39,10 @@ export default async function ProductsPage({
     total: 0,
   };
   try {
-    const res = await api.get(endpoints.products(filters));
+    const authHeaders = await getAuthHeaders();
+    const res = await api.get(endpoints.products(filters), {
+      headers: authHeaders,
+    });
     data = res.data;
   } catch {
     // fallback

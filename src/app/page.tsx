@@ -1,4 +1,5 @@
-import { endpoints, fetchApiCached } from "@/lib/api";
+import { endpoints } from "@/lib/api";
+import { fetchApiCached } from "@/lib/api-server";
 import { PLACEHOLDER_IMAGES } from "@/lib/constants";
 import { ProductCard } from "@/components/ProductCard";
 import type { Product } from "@/types/product";

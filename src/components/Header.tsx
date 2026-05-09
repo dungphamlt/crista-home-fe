@@ -33,6 +33,8 @@ export function Header() {
     }
   };
 
+  console.log(user, "user");
+
   const navLinks = [
     { href: "/", label: "Trang chủ" },
     { href: "/gioi-thieu", label: "Giới thiệu" },
@@ -174,7 +176,11 @@ export function Header() {
                   ) : (
                     <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
                       <span className="text-amber-gold text-lg font-medium text-center uppercase">
-                        {user?.email?.split("@")[0]?.charAt(0)}
+                        {user?.email
+                          ? user.email.split("@")[0]?.charAt(0)
+                          : user?.username
+                            ? user.username.split("@")[0]?.charAt(0)
+                            : "Tài khoản"}
                       </span>
                     </div>
                   )}

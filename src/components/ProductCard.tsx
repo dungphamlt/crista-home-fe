@@ -6,6 +6,7 @@ import { useState } from "react";
 import { PLACEHOLDER_IMAGES } from "@/lib/constants";
 import { useScrollRevealOnce } from "@/hooks/useScrollRevealOnce";
 import { useCart } from "@/lib/cart-context";
+import { useAuth } from "@/lib/auth-context";
 import type { Product } from "@/types/product";
 
 interface ProductCardProps {
@@ -37,6 +38,7 @@ function StarRating({ rating = 5 }: { rating?: number }) {
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const { addItem } = useCart();
+  const { user } = useAuth();
   const [wishlist, setWishlist] = useState(false);
   const { ref: revealRef, visible: revealVisible } = useScrollRevealOnce(
     "-50px",
@@ -63,6 +65,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     setWishlist(!wishlist);
   };
 
+  console.log(product, "product", user?.role);
+
   return (
     <div
       ref={revealRef}
@@ -73,8 +77,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         transitionDelay: revealVisible ? `${index * 0.05}s` : undefined,
       }}
     >
-      <Link href={`/san-pham/${product.slug}`} className="block group">
-        <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
+      <Link href={`/san-pham/${product.slug}`} className="block h-full group">
+        <div className="bg-white dark:bg-gray-800 rounded-lg h-full flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
           <div className="aspect-square relative overflow-hidden bg-gray-100 dark:bg-gray-700">
             <Image
               src={img}
@@ -125,14 +129,36 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               </svg>
             </button>
           </div>
-          <div className="p-4">
+          <div className="p-4 flex-1 flex flex-col justify-between">
             <h3 className="font-bold text-gray-900 dark:text-white line-clamp-2 group-hover:text-rose-500 transition-colors">
               {product.name}
             </h3>
-            <p className="text-red-600 dark:text-red-400 font-semibold mt-2">
-              {formatPrice(product.price)}
-            </p>
-            <StarRating rating={product.averageRating} />
+            <div className="">
+              <p className="text-red-600 dark:text-red-400 font-semibold mt-2">
+                {formatPrice(product.price)}
+              </p>
+              <StarRating rating={product.averageRating} />
+            </div>
+            {user?.role === "partner" && (
+              <div className="mt-2 space-y-1 text-xs font-semibold">
+                {product.wholesalePrice && (
+                  <div className="text-gray-700 dark:text-gray-300">
+                    Giá sỉ:{" "}
+                    <span className="text-emerald-700 dark:text-emerald-400">
+                      {formatPrice(product.wholesalePrice)}
+                    </span>
+                  </div>
+                )}
+                {product.bulkWholesalePrice && (
+                  <div className="text-gray-700 dark:text-gray-300">
+                    Giá sỉ SL:{" "}
+                    <span className="text-emerald-700 dark:text-emerald-400">
+                      {formatPrice(product.bulkWholesalePrice)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
             <div className="mt-3 w-full py-2 bg-gray-200 dark:bg-gray-700 text-center hover:bg-amber-gold dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-lg transition">
               Xem chi tiết
             </div>

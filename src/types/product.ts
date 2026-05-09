@@ -16,6 +16,8 @@ export interface Product {
   name: string;
   slug: string;
   price: number;
+  wholesalePrice?: number;
+  bulkWholesalePrice?: number;
   compareAtPrice?: number;
   images?: string[];
   coverImage?: string;

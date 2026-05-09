@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getAuthTokenForApi } from "@/lib/auth-cookie";
+import { AUTH_TOKEN_COOKIE } from "./auth-cookie-names";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 
@@ -22,17 +23,6 @@ export function getApiBaseUrl(): string {
   return API_URL;
 }
 
-/** Dùng với `fetch` (Server Components) — axios không hỗ trợ `next.revalidate`. */
-export async function fetchApiCached<T>(path: string): Promise<T> {
-  const res = await fetch(`${getApiBaseUrl()}${path}`, {
-    headers: { "Content-Type": "application/json" },
-    next: { revalidate: 300 },
-  });
-  if (!res.ok) {
-    throw new Error(`API ${path} failed: ${res.status}`);
-  }
-  return res.json() as Promise<T>;
-}
 
 export const endpoints = {
   authLogin: () => "/auth/login",
