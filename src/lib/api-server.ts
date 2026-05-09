@@ -33,10 +33,12 @@ export async function fetchApiCached<T>(
     headers.set(key, value);
   });
 
+  const isAuth = !!authHeaders.Authorization;
+
   const res = await fetch(`${getApiBaseUrl()}${path}`, {
     ...options,
     headers,
-    next: { revalidate: 300, ...options?.next },
+    ...(isAuth ? { cache: "no-store" } : { next: { revalidate: 300, ...options?.next } }),
   });
   if (!res.ok) {
     throw new Error(`API ${path} failed: ${res.status}`);

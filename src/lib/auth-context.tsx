@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import {
   createContext,
   useCallback,
@@ -39,6 +41,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -79,7 +82,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await setAuthData(t, u);
     setToken(t);
     setUser(u);
-  }, []);
+    router.refresh();
+  }, [router]);
 
   const openAuthModal = useCallback((mode: AuthModalMode) => {
     setAuthModal(mode);
@@ -129,7 +133,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await removeAuthData();
     setToken(null);
     setUser(null);
-  }, []);
+    router.refresh();
+  }, [router]);
 
   const value = useMemo(
     () => ({
