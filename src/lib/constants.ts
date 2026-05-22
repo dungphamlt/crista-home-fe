@@ -10,3 +10,8 @@ export const PLACEHOLDER_IMAGES = {
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+export const STORE_ADDRESS =
+  "Đường Đội Cấn, Phường Ngọc Hà, Thành phố Hà Nội";
+
+export const STORE_ADDRESS_MAP_EMBED = `https://www.google.com/maps?q=${encodeURIComponent(STORE_ADDRESS)}&output=embed`;

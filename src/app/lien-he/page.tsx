@@ -3,15 +3,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { ContactForm } from "@/components/ContactForm";
 import { NavLinks } from "@/components/NavLinks";
+import {
+  STORE_ADDRESS,
+  STORE_ADDRESS_MAP_EMBED,
+} from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Liên hệ - Crista Home",
-  description:
-    "Liên hệ Crista Home & TEWA — tư vấn sản phẩm, địa chỉ 181 Nguyễn Lương Bằng, Hà Nội.",
+  description: `Liên hệ Crista Home & TEWA — tư vấn sản phẩm, địa chỉ ${STORE_ADDRESS}.`,
 };
-
-const MAP_EMBED_SRC =
-  "https://www.google.com/maps?q=181+Nguy%E1%BB%85n+L%C6%B0%E1%BB%9Dng+B%E1%BA%B1ng,+%C4%90%E1%BB%91ng+%C4%90a,+H%C3%A0+N%E1%BB%99i&output=embed";
 
 export default function ContactPage() {
   return (
@@ -66,7 +66,7 @@ export default function ContactPage() {
                       Địa chỉ
                     </p>
                     <p className="mt-1 text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
-                      181 Nguyễn Lương Bằng, Đống Đa, Hà Nội
+                      {STORE_ADDRESS}
                     </p>
                   </div>
                 </div>
@@ -125,8 +125,8 @@ export default function ContactPage() {
 
             <div className="lg:col-span-7 min-h-[300px] lg:min-h-[420px] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-md bg-gray-200 dark:bg-gray-800">
               <iframe
-                title="Bản đồ Crista Home — 181 Nguyễn Lương Bằng, Hà Nội"
-                src={MAP_EMBED_SRC}
+                title={`Bản đồ Crista Home — ${STORE_ADDRESS}`}
+                src={STORE_ADDRESS_MAP_EMBED}
                 className="w-full h-full min-h-[300px] lg:min-h-[420px]"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

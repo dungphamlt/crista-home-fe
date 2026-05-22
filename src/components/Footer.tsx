@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { STORE_ADDRESS } from "@/lib/constants";
 import { NewsletterForm } from "./NewsletterForm";
 import { SocialSidebar } from "./SocialSidebar";
 
@@ -57,7 +58,7 @@ export function Footer() {
                 <ul className="space-y-3 text-gray-700 dark:text-gray-300 text-sm font-medium">
                   <li className="flex gap-3">
                     <LocationIcon className="shrink-0 w-4 h-4 mt-0.5 text-gray-600 dark:text-gray-400" />
-                    <span>181 Nguyễn Lương Bằng, Đống Đa, Hà Nội</span>
+                    <span>{STORE_ADDRESS}</span>
                   </li>
                   <li className="flex gap-3">
                     <PhoneIcon className="shrink-0 w-4 h-4 mt-0.5 text-gray-600 dark:text-gray-400" />
